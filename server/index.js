@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const adminAuth = require('./middleware/adminAuth');
 const adminRouter = require('./routes/admin');
 const authRouter = require('./routes/auth');
+const clientsRouter = require('./routes/clients');
 
 const { JWT_SECRET, SUPER_ADMIN_SECRET, PORT, CLIENT_URL } = process.env;
 
@@ -28,6 +29,7 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 app.use('/api/admin', adminAuth, adminRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/clients', clientsRouter);
 
 const port = PORT || 4000;
 app.listen(port, () => console.log(`NutriTrack API on :${port}`));
