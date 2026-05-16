@@ -10,6 +10,7 @@ const clientsRouter = require('./routes/clients');
 const goalsRouter = require('./routes/goals');
 const logsRouter = require('./routes/logs');
 const plansRouter = require('./routes/plans');
+const mealsRouter = require('./routes/meals');
 const auth = require('./middleware/auth');
 
 const { JWT_SECRET, SUPER_ADMIN_SECRET, PORT, CLIENT_URL } = process.env;
@@ -37,6 +38,7 @@ app.use('/api/clients', clientsRouter);
 app.use('/api/clients', goalsRouter);
 app.use('/api', auth, logsRouter);
 app.use('/api', plansRouter);
+app.use('/api', mealsRouter);
 
 const port = PORT || 4000;
 app.listen(port, () => console.log(`NutriTrack API on :${port}`));
