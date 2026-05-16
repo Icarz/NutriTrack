@@ -20,13 +20,49 @@ router.get('/', async (req, res) => {
                 WHEN ll.last_log_date IS NULL THEN true
                 WHEN ll.last_log_date < (CURRENT_DATE - INTERVAL '14 days') THEN true
                 ELSE false
-              END AS is_overdue
+              END AS is_overdue,
+              lw.weight        AS current_weight,
+              lg.target_weight AS target_weight,
+              CASE
+                WHEN lg.target_weight IS NULL THEN NULL
+                WHEN c.start_weight IS NULL THEN NULL
+                WHEN (c.start_weight - lg.target_weight) = 0 THEN NULL
+                ELSE ROUND(
+                  LEAST(100, GREATEST(0,
+                    (c.start_weight - COALESCE(lw.weight, c.start_weight))
+                    / (c.start_weight - lg.target_weight) * 100
+                  ))::numeric, 1)
+              END AS current_progress_pct,
+              (ap.client_id IS NOT NULL) AS has_active_plan,
+              COALESCE(wl.logs_this_week, 0) AS logs_this_week
          FROM clients c
-         LEFT JOIN (
-           SELECT client_id, MAX(log_date) AS last_log_date
+         LEFT JOIN LATERAL (
+           SELECT MAX(log_date) AS last_log_date
              FROM progress_logs
-            GROUP BY client_id
-         ) ll ON ll.client_id = c.id
+            WHERE client_id = c.id
+         ) ll ON true
+         LEFT JOIN LATERAL (
+           SELECT weight FROM progress_logs
+            WHERE client_id = c.id AND weight IS NOT NULL
+            ORDER BY log_date DESC LIMIT 1
+         ) lw ON true
+         LEFT JOIN LATERAL (
+           SELECT target_weight FROM goals
+            WHERE client_id = c.id
+            ORDER BY created_at DESC LIMIT 1
+         ) lg ON true
+         LEFT JOIN LATERAL (
+           SELECT client_id FROM diet_plans
+            WHERE client_id = c.id
+              AND created_at >= NOW() - INTERVAL '30 days'
+            LIMIT 1
+         ) ap ON true
+         LEFT JOIN LATERAL (
+           SELECT COUNT(*)::int AS logs_this_week
+             FROM progress_logs
+            WHERE client_id = c.id
+              AND log_date >= date_trunc('week', CURRENT_DATE)
+         ) wl ON true
         WHERE c.nutritionist_id = $1
         ORDER BY c.created_at DESC`,
       [req.nutritionist.id]

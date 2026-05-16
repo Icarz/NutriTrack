@@ -85,4 +85,76 @@ router.post('/:id/goals', async (req, res) => {
   }
 });
 
+router.put('/:id/goals', async (req, res) => {
+  const clientId = parseInt(req.params.id, 10);
+  if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
+  const body = req.body || {};
+  const allowed = ['target_weight', 'target_date', 'daily_calories', 'protein_g', 'carbs_g', 'fat_g', 'notes'];
+  try {
+    const client = await verifyClient(clientId, req.nutritionist.id);
+    if (!client) return res.status(404).json({ error: 'Not found' });
+
+    const existingRes = await pool.query(
+      'SELECT * FROM goals WHERE client_id = $1 ORDER BY created_at DESC LIMIT 1',
+      [clientId]
+    );
+    const existing = existingRes.rows[0];
+
+    let goal;
+    if (existing) {
+      const sets = [];
+      const vals = [];
+      let i = 1;
+      for (const f of allowed) {
+        if (Object.prototype.hasOwnProperty.call(body, f)) {
+          sets.push(`${f} = $${i++}`);
+          vals.push(body[f]);
+        }
+      }
+      if (sets.length === 0) {
+        goal = existing;
+      } else {
+        vals.push(existing.id);
+        const { rows } = await pool.query(
+          `UPDATE goals SET ${sets.join(', ')} WHERE id = $${i} RETURNING *`,
+          vals
+        );
+        goal = rows[0];
+      }
+    } else {
+      const { rows } = await pool.query(
+        `INSERT INTO goals
+           (client_id, target_weight, target_date, daily_calories,
+            protein_g, carbs_g, fat_g, notes)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+         RETURNING *`,
+        [
+          clientId,
+          body.target_weight ?? null,
+          body.target_date ?? null,
+          body.daily_calories ?? null,
+          body.protein_g ?? null,
+          body.carbs_g ?? null,
+          body.fat_g ?? null,
+          body.notes ?? null,
+        ]
+      );
+      goal = rows[0];
+    }
+
+    const logRes = await pool.query(
+      'SELECT weight FROM progress_logs WHERE client_id = $1 AND weight IS NOT NULL ORDER BY log_date DESC LIMIT 1',
+      [clientId]
+    );
+    const currentWeight = logRes.rows[0] ? logRes.rows[0].weight : client.start_weight;
+    const progress_pct = goal.target_weight == null
+      ? null
+      : computeProgressPct(client.start_weight, currentWeight, goal.target_weight);
+
+    res.json({ ...goal, current_weight: currentWeight, progress_pct });
+  } catch (e) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;
