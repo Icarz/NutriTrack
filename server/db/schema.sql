@@ -59,13 +59,15 @@ CREATE TABLE IF NOT EXISTS meals (
 );
 
 CREATE TABLE IF NOT EXISTS progress_logs (
-  id           SERIAL PRIMARY KEY,
-  client_id    INT REFERENCES clients(id) ON DELETE CASCADE,
-  log_date     DATE NOT NULL,
-  weight       NUMERIC(5,1),
-  waist_cm     NUMERIC(5,1),
-  hips_cm      NUMERIC(5,1),
-  arms_cm      NUMERIC(5,1),
-  notes        TEXT,
+  id                SERIAL PRIMARY KEY,
+  client_id         INT REFERENCES clients(id) ON DELETE CASCADE,
+  log_date          DATE NOT NULL,
+  weight            NUMERIC(5,1),
+  waist_cm          NUMERIC(5,1),
+  hips_cm           NUMERIC(5,1),
+  arms_cm           NUMERIC(5,1),
+  session_notes     TEXT,
+  plan_adjustments  TEXT,
+  next_appointment  DATE,
   created_at   TIMESTAMPTZ DEFAULT NOW()
 );
