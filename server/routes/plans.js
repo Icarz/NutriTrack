@@ -99,14 +99,54 @@ function round1(n) {
   return Math.round(n * 10) / 10;
 }
 
-// 1. GET /api/clients/:id/plans/active  (placeholder for session 3)
+// 1. GET /api/clients/:id/plans/active
+// Returns plan with most recent week_start <= today, or most recent future plan,
+// with full meals/totals payload. Null if no plans exist.
 router.get('/clients/:id/plans/active', async (req, res) => {
-  res.status(501).json({ error: 'Not implemented' });
+  const clientId = parseInt(req.params.id, 10);
+  if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
+  try {
+    const client = await verifyClient(clientId, req.nutritionist.id);
+    if (!client) return res.status(404).json({ error: 'Not found' });
+
+    const { rows } = await pool.query(
+      `SELECT id FROM diet_plans
+        WHERE client_id = $1
+        ORDER BY (week_start <= CURRENT_DATE) DESC,
+                 ABS(week_start - CURRENT_DATE) ASC
+        LIMIT 1`,
+      [clientId]
+    );
+    if (!rows[0]) return res.json(null);
+    const payload = await buildPlanResponse(rows[0].id);
+    res.json(payload);
+  } catch (e) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-// 2. GET /api/clients/:id/plans/week  (placeholder for session 3)
+// 2. GET /api/clients/:id/plans/week?date=YYYY-MM-DD
 router.get('/clients/:id/plans/week', async (req, res) => {
-  res.status(501).json({ error: 'Not implemented' });
+  const clientId = parseInt(req.params.id, 10);
+  if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
+  const date = req.query.date;
+  if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return res.status(400).json({ error: 'date query (YYYY-MM-DD) required' });
+  }
+  try {
+    const client = await verifyClient(clientId, req.nutritionist.id);
+    if (!client) return res.status(404).json({ error: 'Not found' });
+
+    const { rows } = await pool.query(
+      'SELECT id FROM diet_plans WHERE client_id = $1 AND week_start = $2 LIMIT 1',
+      [clientId, date]
+    );
+    if (!rows[0]) return res.json(null);
+    const payload = await buildPlanResponse(rows[0].id);
+    res.json(payload);
+  } catch (e) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // 3. GET /api/clients/:id/plans
