@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import ProgressBar from './ProgressBar';
+import GoalProgressBar from './GoalProgressBar';
 import Badge from './Badge';
 
 function initials(name) {
@@ -38,8 +38,15 @@ export default function ClientRow({ client }) {
           </div>
         </div>
       </td>
-      <td className="px-4 py-3">
-        <ProgressBar pct={client.current_progress_pct != null ? Number(client.current_progress_pct) : null} />
+      <td className="px-4 py-3 min-w-[180px]">
+        <GoalProgressBar
+          startWeight={client.start_weight}
+          currentWeight={client.current_weight ?? client.start_weight}
+          targetWeight={client.target_weight ?? null}
+          targetDate={null}
+          createdAt={client.created_at}
+          showDetails={false}
+        />
       </td>
       <td className="px-4 py-3 text-sm text-gray-700">{formatDate(client.last_log_date)}</td>
       <td className="px-4 py-3 text-sm text-gray-700">
