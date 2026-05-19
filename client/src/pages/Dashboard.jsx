@@ -38,6 +38,10 @@ export default function Dashboard() {
   const [sort, setSort] = useState(SORT_DEFAULT);
 
   useEffect(() => {
+    document.title = 'Dashboard | NutriTrack';
+  }, []);
+
+  useEffect(() => {
     (async () => {
       try {
         const data = await getClients();

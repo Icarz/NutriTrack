@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import ClientForm from '../components/ClientForm';
@@ -7,6 +8,10 @@ import { useToast } from '../components/Toast';
 export default function ClientNew() {
   const navigate = useNavigate();
   const { showToast } = useToast();
+
+  useEffect(() => {
+    document.title = 'New Client | NutriTrack';
+  }, []);
 
   async function handleSubmit(payload) {
     const created = await createClient(payload);

@@ -35,6 +35,10 @@ export default function AdminPanel() {
   const [form, setForm] = useState(emptyForm);
   const [confirmId, setConfirmId] = useState(null);
 
+  useEffect(() => {
+    document.title = 'Admin | NutriTrack';
+  }, []);
+
   function handleError(e) {
     if (e?.response?.status === 403) setError('Wrong admin secret');
     else setError(e?.response?.data?.error || e?.message || 'Request failed');

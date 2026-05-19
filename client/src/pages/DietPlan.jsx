@@ -67,6 +67,12 @@ export default function DietPlan() {
   const [error, setError] = useState(null);
   const [panel, setPanel] = useState(null); // { dayOfWeek, mealType, meal, planId } | null
 
+  useEffect(() => {
+    document.title = client?.name
+      ? `Diet Plan — ${client.name} | NutriTrack`
+      : 'Diet Plan | NutriTrack';
+  }, [client]);
+
   const applyPlanPayload = useCallback((payload) => {
     if (!payload) {
       setPlan(null);

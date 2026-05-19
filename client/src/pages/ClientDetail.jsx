@@ -48,6 +48,10 @@ export default function ClientDetail() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    document.title = client?.name ? `${client.name} | NutriTrack` : 'Client | NutriTrack';
+  }, [client]);
+
+  useEffect(() => {
     let cancelled = false;
     async function load() {
       setLoading(true);

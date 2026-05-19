@@ -59,6 +59,12 @@ export default function ProgressLog() {
   const [saveError, setSaveError] = useState(null);
 
   useEffect(() => {
+    document.title = client?.name
+      ? `Log Visit — ${client.name} | NutriTrack`
+      : 'Log Visit | NutriTrack';
+  }, [client]);
+
+  useEffect(() => {
     let cancelled = false;
     async function load() {
       setLoading(true);
