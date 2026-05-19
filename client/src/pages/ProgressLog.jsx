@@ -259,11 +259,15 @@ export default function ProgressLog() {
                 }
                 error={errors.weight}
                 hint={
-                  <span>
-                    Last: <b>{prev?.weight ?? '—'}</b> kg · Start:{' '}
-                    <b>{client?.start_weight ?? '—'}</b> kg · Target:{' '}
-                    <b>{goal?.target_weight ?? '—'}</b> kg
-                  </span>
+                  logs.length === 0 ? (
+                    <span>No previous data — this will be the starting measurement</span>
+                  ) : (
+                    <span>
+                      Last: <b>{prev?.weight ?? '—'}</b> kg · Start:{' '}
+                      <b>{client?.start_weight ?? '—'}</b> kg · Target:{' '}
+                      <b>{goal?.target_weight ?? '—'}</b> kg
+                    </span>
+                  )
                 }
               >
                 <input
@@ -357,16 +361,22 @@ export default function ProgressLog() {
                 </div>
               )}
 
-              {pace && (
-                <div
-                  className={`mt-3 inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                    pace.tone === 'green'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-amber-100 text-amber-700'
-                  }`}
-                >
-                  {pace.label}
+              {logs.length === 0 ? (
+                <div className="mt-3 inline-block px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                  This is the first visit
                 </div>
+              ) : (
+                pace && (
+                  <div
+                    className={`mt-3 inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                      pace.tone === 'green'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-amber-100 text-amber-700'
+                    }`}
+                  >
+                    {pace.label}
+                  </div>
+                )
               )}
 
               {goal?.target_date && (
@@ -379,11 +389,7 @@ export default function ProgressLog() {
               )}
             </Panel>
 
-            {logs.length === 0 ? (
-              <Panel title="Previous visits">
-                <p className="text-sm text-gray-400 text-center py-6">This is the first visit</p>
-              </Panel>
-            ) : (
+            {logs.length > 0 && (
               <Panel title="Previous visits">
                 <ul className="space-y-3">
                   {logs.slice(0, 6).map((l, idx) => (

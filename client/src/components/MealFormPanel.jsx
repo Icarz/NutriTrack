@@ -44,6 +44,16 @@ export default function MealFormPanel({
     return Math.round(p * 4 + c * 4 + f * 9);
   }, [protein, carbs, fat]);
 
+  const showMacroWarning = useMemo(() => {
+    const enteredKcal = parseFloat(calories);
+    return (
+      !isNaN(estimatedKcal) &&
+      !isNaN(enteredKcal) &&
+      enteredKcal > 0 &&
+      Math.abs(estimatedKcal - enteredKcal) / enteredKcal > 0.1
+    );
+  }, [calories, estimatedKcal]);
+
   useEffect(() => {
     if (!caloriesManual) setCalories(estimatedKcal ? String(estimatedKcal) : '');
   }, [estimatedKcal, caloriesManual]);
@@ -212,6 +222,12 @@ export default function MealFormPanel({
               </button>
             )}
             {errors.calories && <p className="text-xs text-red-600 mt-1">{errors.calories}</p>}
+            {caloriesManual && showMacroWarning && !errors.calories && (
+              <p className="text-amber-600 text-xs mt-1">
+                Heads up — calories don't match the macro total
+                (estimated {Math.round(estimatedKcal)} kcal)
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-3 gap-3">

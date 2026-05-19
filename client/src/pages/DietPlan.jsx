@@ -342,6 +342,12 @@ export default function DietPlan() {
 
         <SummaryCards goal={goal} summary={summary} />
 
+        {meals.length === 0 && (
+          <div className="mb-3 px-3 py-2 bg-blue-50 border border-blue-200 text-blue-800 rounded text-sm">
+            Click any cell to add a meal
+          </div>
+        )}
+
         <PlanGrid
           weekStart={currentWeekStart}
           meals={meals}

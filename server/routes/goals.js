@@ -14,6 +14,35 @@ async function verifyClient(clientId, nutritionistId) {
   return rows[0] || null;
 }
 
+function isValidIsoDate(s) {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + 'T00:00:00Z');
+  return !Number.isNaN(d.getTime());
+}
+
+function isFutureDate(s) {
+  const d = new Date(s + 'T00:00:00Z');
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+  return d.getTime() > today.getTime();
+}
+
+function validateGoalBody(body, { requireFields }) {
+  if (requireFields || body.target_weight !== undefined) {
+    const tw = Number(body.target_weight);
+    if (!Number.isFinite(tw) || tw <= 0) return 'target_weight: required, must be a positive number';
+  }
+  if (requireFields || body.target_date !== undefined) {
+    if (!isValidIsoDate(body.target_date)) return 'target_date: must be YYYY-MM-DD';
+    if (!isFutureDate(body.target_date)) return 'target_date: must be in the future';
+  }
+  if (body.daily_calories != null && body.daily_calories !== '') {
+    const n = Number(body.daily_calories);
+    if (!Number.isFinite(n) || n < 500 || n > 5000) return 'daily_calories: must be 500-5000';
+  }
+  return null;
+}
+
 function computeProgressPct(startWeight, currentWeight, targetWeight) {
   const s = parseFloat(startWeight);
   const c = parseFloat(currentWeight);
@@ -58,6 +87,8 @@ router.post('/:id/goals', async (req, res) => {
   const clientId = parseInt(req.params.id, 10);
   if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
+  const verr = validateGoalBody(body, { requireFields: true });
+  if (verr) return res.status(400).json({ error: verr });
   try {
     const client = await verifyClient(clientId, req.nutritionist.id);
     if (!client) return res.status(404).json({ error: 'Not found' });
@@ -89,6 +120,8 @@ router.put('/:id/goals', async (req, res) => {
   const clientId = parseInt(req.params.id, 10);
   if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
+  const verr = validateGoalBody(body, { requireFields: false });
+  if (verr) return res.status(400).json({ error: verr });
   const allowed = ['target_weight', 'target_date', 'daily_calories', 'protein_g', 'carbs_g', 'fat_g', 'notes'];
   try {
     const client = await verifyClient(clientId, req.nutritionist.id);

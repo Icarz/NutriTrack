@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import StatCard from '../components/StatCard';
 import ClientRow from '../components/ClientRow';
+import { SkeletonStatCards, SkeletonClientRow } from '../components/Skeleton';
 import { getClients } from '../api/clients';
 
 const FILTERS = [
@@ -125,12 +126,16 @@ export default function Dashboard() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <StatCard label="Total clients" value={stats.total} />
-          <StatCard label="Active plans" value={stats.activePlans} />
-          <StatCard label="Avg goal progress" value={`${stats.avgProgress}%`} />
-          <StatCard label="Check-ins this week" value={stats.checkInsThisWeek} />
-        </div>
+        {loading ? (
+          <SkeletonStatCards />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <StatCard label="Total clients" value={stats.total} />
+            <StatCard label="Active plans" value={stats.activePlans} />
+            <StatCard label="Avg goal progress" value={`${stats.avgProgress}%`} />
+            <StatCard label="Check-ins this week" value={stats.checkInsThisWeek} />
+          </div>
+        )}
 
         {error && (
           <div className="mb-4 px-4 py-2 bg-red-50 border border-red-200 text-red-700 rounded">
@@ -163,48 +168,58 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="bg-white border border-gray-200 rounded overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-100 text-left">
-              <tr>
-                <th
-                  className="px-4 py-2 cursor-pointer select-none"
-                  onClick={cycleClientSort}
-                >
-                  Client{sortIndicator('name')}
-                </th>
-                <th className="px-4 py-2">Goal progress</th>
-                <th
-                  className="px-4 py-2 cursor-pointer select-none"
-                  onClick={setLastLogSort}
-                >
-                  Last check-in{sortIndicator('last_log')}
-                </th>
-                <th className="px-4 py-2">Current weight</th>
-                <th className="px-4 py-2">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading && (
+        {!loading && clients.length === 0 ? (
+          <div className="bg-white border border-gray-200 rounded p-12 text-center">
+            <div className="text-5xl mb-3 opacity-60" aria-hidden="true">👥</div>
+            <h2 className="text-lg font-semibold text-gray-800">No clients yet</h2>
+            <p className="text-sm text-gray-500 mt-1 mb-4">
+              Add your first client to get started
+            </p>
+            <button
+              onClick={() => navigate('/clients/new')}
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            >
+              Add client
+            </button>
+          </div>
+        ) : (
+          <div className="bg-white border border-gray-200 rounded overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-100 text-left">
                 <tr>
-                  <td colSpan={5} className="px-4 py-6 text-center text-gray-500">
-                    Loading...
-                  </td>
+                  <th
+                    className="px-4 py-2 cursor-pointer select-none"
+                    onClick={cycleClientSort}
+                  >
+                    Client{sortIndicator('name')}
+                  </th>
+                  <th className="px-4 py-2">Goal progress</th>
+                  <th
+                    className="px-4 py-2 cursor-pointer select-none"
+                    onClick={setLastLogSort}
+                  >
+                    Last check-in{sortIndicator('last_log')}
+                  </th>
+                  <th className="px-4 py-2">Current weight</th>
+                  <th className="px-4 py-2">Status</th>
                 </tr>
-              )}
-              {!loading && visibleClients.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="px-4 py-6 text-center text-gray-500">
-                    {clients.length === 0 ? 'No clients yet' : 'No clients match'}
-                  </td>
-                </tr>
-              )}
-              {visibleClients.map((c) => (
-                <ClientRow key={c.id} client={c} />
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {loading &&
+                  Array.from({ length: 6 }).map((_, i) => <SkeletonClientRow key={i} />)}
+                {!loading && visibleClients.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-4 py-6 text-center text-gray-500">
+                      No clients match
+                    </td>
+                  </tr>
+                )}
+                {!loading &&
+                  visibleClients.map((c) => <ClientRow key={c.id} client={c} />)}
+              </tbody>
+            </table>
+          </div>
+        )}
       </main>
     </div>
   );

@@ -7,7 +7,7 @@ import Badge from '../components/Badge';
 import { getClient } from '../api/clients';
 import { getActivePlan } from '../api/plans';
 import { getLogs } from '../api/logs';
-import { getGoal } from '../api/goals';
+import { getGoal, saveGoal } from '../api/goals';
 
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const PREVIEW_DAYS = 4;
@@ -215,18 +215,24 @@ export default function ClientDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <section className="bg-white border rounded p-5">
             <h2 className="text-lg font-semibold mb-4">Goal breakdown</h2>
-            <GoalProgressBar
-              startWeight={client.start_weight}
-              currentWeight={latestLog?.weight ?? client.start_weight}
-              targetWeight={goal?.target_weight ?? null}
-              targetDate={goal?.target_date ?? null}
-              createdAt={client.created_at}
-              showDetails={true}
-            />
-            <div className="mt-5 pt-5 border-t">
-              <h3 className="text-sm font-medium mb-3">Macro targets</h3>
-              <MacroBars activePlan={activePlan} goal={goal} />
-            </div>
+            {goal ? (
+              <>
+                <GoalProgressBar
+                  startWeight={client.start_weight}
+                  currentWeight={latestLog?.weight ?? client.start_weight}
+                  targetWeight={goal.target_weight ?? null}
+                  targetDate={goal.target_date ?? null}
+                  createdAt={client.created_at}
+                  showDetails={true}
+                />
+                <div className="mt-5 pt-5 border-t">
+                  <h3 className="text-sm font-medium mb-3">Macro targets</h3>
+                  <MacroBars activePlan={activePlan} goal={goal} />
+                </div>
+              </>
+            ) : (
+              <InlineGoalForm clientId={clientId} startWeight={client?.start_weight} onSaved={setGoal} />
+            )}
           </section>
 
           <section className="bg-white border rounded p-5">
@@ -439,6 +445,177 @@ function EmptyPlanState({ clientId }) {
         Create first plan
       </Link>
     </div>
+  );
+}
+
+function InlineGoalForm({ clientId, startWeight, onSaved }) {
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState({
+    target_weight: '',
+    target_date: '',
+    daily_calories: '',
+    protein_g: '',
+    carbs_g: '',
+    fat_g: '',
+  });
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState(null);
+  const [errors, setErrors] = useState({});
+
+  if (!open) {
+    return (
+      <div className="text-center py-6">
+        <p className="text-sm text-gray-500 mb-3">No goal set yet</p>
+        <button
+          onClick={() => setOpen(true)}
+          className="px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+        >
+          Set goal
+        </button>
+      </div>
+    );
+  }
+
+  const upd = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+  const toNum = (v) => (v === '' || v == null ? null : Number(v));
+
+  function validate() {
+    setErrors({});
+    setErr(null);
+    const sw = parseFloat(startWeight);
+    const tw = parseFloat(form.target_weight);
+
+    if (isNaN(tw) || tw <= 0) {
+      setErr('Target weight must be a positive number');
+      return false;
+    }
+    if (!isNaN(sw) && tw >= sw) {
+      setErr('Target weight must be less than start weight for a weight loss goal');
+      return false;
+    }
+    if (!form.target_date) {
+      setErr('Target date is required');
+      return false;
+    }
+    if (new Date(form.target_date) <= new Date()) {
+      setErr('Target date must be a future date');
+      return false;
+    }
+    if (form.daily_calories !== '' && form.daily_calories != null) {
+      const dc = toNum(form.daily_calories);
+      if (dc == null || dc < 500 || dc > 5000) {
+        setErr('Daily calories must be 500–5000');
+        return false;
+      }
+    }
+    return true;
+  }
+
+  async function submit(e) {
+    e.preventDefault();
+    if (!validate()) return;
+    setSaving(true);
+    setErr(null);
+    try {
+      const saved = await saveGoal(clientId, {
+        target_weight: toNum(form.target_weight),
+        target_date: form.target_date || null,
+        daily_calories: toNum(form.daily_calories),
+        protein_g: toNum(form.protein_g),
+        carbs_g: toNum(form.carbs_g),
+        fat_g: toNum(form.fat_g),
+      });
+      onSaved(saved);
+    } catch (e2) {
+      setErr(e2.response?.data?.error || e2.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const input =
+    'border border-gray-300 rounded px-2 py-1.5 text-sm w-full';
+
+  return (
+    <form onSubmit={submit} className="space-y-3">
+      <div className="grid grid-cols-2 gap-3">
+        <label className="text-xs text-gray-600">
+          Target weight (kg) *
+          <input
+            type="number"
+            step="0.1"
+            value={form.target_weight}
+            onChange={upd('target_weight')}
+            className={`${input} mt-1 ${errors.target_weight ? 'border-red-400' : ''}`}
+          />
+          {errors.target_weight && <span className="block text-red-600 mt-0.5">{errors.target_weight}</span>}
+        </label>
+        <label className="text-xs text-gray-600">
+          Target date *
+          <input
+            type="date"
+            value={form.target_date}
+            onChange={upd('target_date')}
+            className={`${input} mt-1 ${errors.target_date ? 'border-red-400' : ''}`}
+          />
+          {errors.target_date && <span className="block text-red-600 mt-0.5">{errors.target_date}</span>}
+        </label>
+        <label className="text-xs text-gray-600">
+          Daily calories
+          <input
+            type="number"
+            value={form.daily_calories}
+            onChange={upd('daily_calories')}
+            className={`${input} mt-1 ${errors.daily_calories ? 'border-red-400' : ''}`}
+          />
+          {errors.daily_calories && <span className="block text-red-600 mt-0.5">{errors.daily_calories}</span>}
+        </label>
+        <label className="text-xs text-gray-600">
+          Protein (g)
+          <input
+            type="number"
+            value={form.protein_g}
+            onChange={upd('protein_g')}
+            className={`${input} mt-1`}
+          />
+        </label>
+        <label className="text-xs text-gray-600">
+          Carbs (g)
+          <input
+            type="number"
+            value={form.carbs_g}
+            onChange={upd('carbs_g')}
+            className={`${input} mt-1`}
+          />
+        </label>
+        <label className="text-xs text-gray-600">
+          Fat (g)
+          <input
+            type="number"
+            value={form.fat_g}
+            onChange={upd('fat_g')}
+            className={`${input} mt-1`}
+          />
+        </label>
+      </div>
+      {err && <div className="text-xs text-red-600">{err}</div>}
+      <div className="flex gap-2 justify-end">
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="px-3 py-1.5 text-sm border rounded hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={saving}
+          className="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+        >
+          {saving ? 'Saving…' : 'Save goal'}
+        </button>
+      </div>
+    </form>
   );
 }
 

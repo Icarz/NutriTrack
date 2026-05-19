@@ -73,9 +73,35 @@ router.get('/', async (req, res) => {
   }
 });
 
+function validateClientBody(body, { requireName }) {
+  if (requireName) {
+    if (typeof body.name !== 'string' || body.name.trim().length < 1) {
+      return 'name: required, non-empty string';
+    }
+  } else if (body.name !== undefined) {
+    if (typeof body.name !== 'string' || body.name.trim().length < 1) {
+      return 'name: must be non-empty string';
+    }
+  }
+  if (body.start_weight !== undefined && body.start_weight !== null && body.start_weight !== '') {
+    const n = Number(body.start_weight);
+    if (!Number.isFinite(n) || n <= 0) return 'start_weight: must be a positive number';
+  }
+  if (body.age !== undefined && body.age !== null && body.age !== '') {
+    const n = Number(body.age);
+    if (!Number.isFinite(n) || n < 1 || n > 120) return 'age: must be 1-120';
+  }
+  if (body.height_cm !== undefined && body.height_cm !== null && body.height_cm !== '') {
+    const n = Number(body.height_cm);
+    if (!Number.isFinite(n) || n < 50 || n > 250) return 'height_cm: must be 50-250';
+  }
+  return null;
+}
+
 router.post('/', async (req, res) => {
   const body = req.body || {};
-  if (!body.name) return res.status(400).json({ error: 'name required' });
+  const err = validateClientBody(body, { requireName: true });
+  if (err) return res.status(400).json({ error: err });
   try {
     const { rows } = await pool.query(
       `INSERT INTO clients
@@ -139,6 +165,8 @@ router.put('/:id', async (req, res) => {
   const id = parseInt(req.params.id, 10);
   if (!Number.isInteger(id)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
+  const verr = validateClientBody(body, { requireName: false });
+  if (verr) return res.status(400).json({ error: verr });
   const fields = [];
   const values = [];
   let i = 1;
