@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>NutriTrack — Logo Options</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin:0; padding:0; background:#f3f2ef; font-family: 'Inter', sans-serif; color:#1A2421; }
+  .checker {
+    background-image:
+      linear-gradient(45deg, #e6e4df 25%, transparent 25%),
+      linear-gradient(-45deg, #e6e4df 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #e6e4df 75%),
+      linear-gradient(-45deg, transparent 75%, #e6e4df 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+    background-color: #faf9f6;
+  }
+  .logo-frame {
+    width: 100%; height: 100%;
+    display:flex; flex-direction:column;
+  }
+  .logo-stage {
+    flex: 1;
+    display:flex; align-items:center; justify-content:center;
+    padding: 40px;
+    position: relative;
+  }
+  .logo-stage svg { max-width: 100%; max-height: 100%; display:block; }
+  .logo-meta {
+    border-top: 1px solid #e6e4df;
+    background: #ffffff;
+    padding: 18px 22px;
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .logo-name { font-family:'Manrope', sans-serif; font-weight:700; font-size:15px; letter-spacing:-0.01em; color:#1A2421; }
+  .logo-desc { font-size:13px; color:#6b7066; line-height:1.5; }
+  .logo-tags { display:flex; gap:6px; margin-top:4px; flex-wrap:wrap; }
+  .tag { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:#3a5a48; background:#ecf2ed; padding:3px 8px; border-radius:999px; }
+
+  /* color row */
+  .palette { display:flex; gap:6px; margin-top:8px; }
+  .swatch { width:18px; height:18px; border-radius:4px; border:1px solid rgba(0,0,0,0.06); }
+
+  .download {
+    margin-top:10px;
+    align-self:flex-start;
+    font-family:'Manrope', sans-serif;
+    font-size:12px; font-weight:600;
+    color:#0F4C3A;
+    background:transparent; border:1px solid #0F4C3A;
+    padding:6px 12px; border-radius:999px;
+    cursor:pointer;
+    transition: all .15s ease;
+  }
+  .download:hover { background:#0F4C3A; color:#fff; }
+
+  /* dark variant strip showing logo on dark */
+  .variant-row { display:flex; height: 110px; border-top:1px solid #e6e4df; }
+  .variant-cell { flex:1; display:flex; align-items:center; justify-content:center; padding:16px; }
+  .variant-cell svg { max-width:100%; max-height:100%; }
+  .variant-cell.dark { background:#0F2A22; }
+  .variant-cell.mono { background:#1A2421; }
+
+  /* Brief block */
+  .brief {
+    font-family:'Manrope', sans-serif;
+    padding: 22px 28px;
+    line-height:1.55;
+    color:#2a302b;
+  }
+  .brief h2 { font-family:'Fraunces', serif; font-weight:600; font-size:22px; margin: 0 0 8px; letter-spacing:-0.01em; color:#0F2A22; }
+  .brief p { margin: 0 0 8px; font-size:14px; color:#4a5048; }
+  .brief .kv { display:grid; grid-template-columns: 110px 1fr; gap:6px 14px; margin-top:14px; font-size:13px; }
+  .brief .kv dt { color:#8a8f86; font-weight:500; }
+  .brief .kv dd { margin:0; color:#1A2421; font-weight:500; }
+</style>
+</head>
+<body>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+
+<div id="root"></div>
+
+<script type="text/babel">
+const { useMemo } = React;
+
+// ---------- LOGO 1: Wordmark with leaf-pulse "i" dot ----------
+// "NutriTrack" wordmark where the dot of the 'i' becomes a leaf with a pulse line through the letters.
+function Logo1({ variant = 'light' }) {
+  const ink = variant === 'dark' ? '#F4F1EA' : '#0F2A22';
+  const accent = variant === 'mono' ? ink : '#2E8B5F';
+  return (
+    <svg viewBox="0 0 620 180" xmlns="http://www.w3.org/2000/svg" aria-label="NutriTrack logo">
+      {/* pulse line */}
+      <path
+        d="M 30 120 L 150 120 L 168 96 L 188 140 L 208 108 L 224 120 L 590 120"
+        fill="none" stroke={accent} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
+        opacity="0.85"
+      />
+      {/* wordmark */}
+      <text x="30" y="100"
+        fontFamily="Manrope, sans-serif" fontWeight="800" fontSize="84"
+        letterSpacing="-3" fill={ink}>
+        Nutr<tspan dx="-2">i</tspan>Track
+      </text>
+      {/* leaf replacing the dot above 'i' */}
+      <g transform="translate(258, 26)">
+        <path d="M 0 16 C 0 6, 8 0, 16 0 C 16 10, 10 18, 0 16 Z" fill={accent}/>
+        <path d="M 2 14 L 13 4" stroke={variant === 'mono' ? '#0F2A22' : '#0F2A22'} strokeOpacity={variant==='dark'?'0.6':'0.35'} strokeWidth="1.2" strokeLinecap="round" fill="none"/>
+      </g>
+    </svg>
+  );
+}
+
+// ---------- LOGO 2: Geometric mark — leaf inside a tracking ring ----------
+function Logo2({ variant = 'light', symbolOnly = false }) {
+  const ink = variant === 'dark' ? '#F4F1EA' : '#0F2A22';
+  const accent = variant === 'mono' ? ink : '#2E8B5F';
+  const ring = variant === 'mono' ? ink : (variant === 'dark' ? '#7DBA8A' : '#0F4C3A');
+  return (
+    <svg viewBox={symbolOnly ? '0 0 200 200' : '0 0 620 180'} xmlns="http://www.w3.org/2000/svg" aria-label="NutriTrack logo">
+      <g transform={symbolOnly ? 'translate(40,20)' : 'translate(20,20)'}>
+        {/* progress ring – 3/4 stroke, suggests tracking */}
+        <circle cx="70" cy="70" r="62" fill="none" stroke={ring} strokeOpacity="0.18" strokeWidth="10"/>
+        <path
+          d="M 70 8
+             A 62 62 0 1 1 26 114"
+          fill="none" stroke={ring} strokeWidth="10" strokeLinecap="round"
+        />
+        {/* leaf */}
+        <path
+          d="M 70 35
+             C 100 40, 110 70, 92 100
+             C 70 110, 45 95, 40 70
+             C 50 50, 62 40, 70 35 Z"
+          fill={accent}
+        />
+        {/* vein */}
+        <path d="M 50 92 Q 70 70 88 48" stroke="#F4F1EA" strokeOpacity="0.55" strokeWidth="3" fill="none" strokeLinecap="round"/>
+      </g>
+      {!symbolOnly && (
+        <g transform="translate(190, 0)">
+          <text x="0" y="92"
+            fontFamily="Manrope, sans-serif" fontWeight="700" fontSize="62"
+            letterSpacing="-2" fill={ink}>Nutri<tspan fontWeight="500" fill={ink}>Track</tspan></text>
+          <text x="2" y="124"
+            fontFamily="Inter, sans-serif" fontWeight="500" fontSize="13"
+            letterSpacing="6" fill={variant==='dark' ? '#7DBA8A' : '#5a6a5e'}>FOR PROFESSIONALS</text>
+        </g>
+      )}
+    </svg>
+  );
+}
+
+// ---------- LOGO 3: Monogram — "N" cut from a leaf silhouette ----------
+function Logo3({ variant = 'light', symbolOnly = false }) {
+  const ink = variant === 'dark' ? '#F4F1EA' : '#0F2A22';
+  const accent = variant === 'mono' ? ink : '#1E6E47';
+  return (
+    <svg viewBox={symbolOnly ? '0 0 200 200' : '0 0 620 180'} xmlns="http://www.w3.org/2000/svg" aria-label="NutriTrack logo">
+      <defs>
+        <mask id="n-cut">
+          <rect width="100%" height="100%" fill="white"/>
+          {/* N-shape carved out */}
+          <path d="M 55 50 L 55 130 L 70 130 L 70 78 L 110 130 L 125 130 L 125 50 L 110 50 L 110 102 L 70 50 Z" fill="black"/>
+        </mask>
+      </defs>
+      <g transform={symbolOnly ? 'translate(10,0)' : 'translate(0,0)'}>
+        {/* leaf shape with N cut through */}
+        <g mask="url(#n-cut)">
+          <path d="M 30 100
+                   C 30 50, 70 20, 130 20
+                   C 160 20, 180 30, 180 30
+                   C 180 30, 175 100, 130 140
+                   C 90 170, 40 160, 30 100 Z"
+                fill={accent}/>
+        </g>
+        {/* small accent dot - 'tracking point' */}
+        <circle cx="155" cy="55" r="6" fill={variant==='mono' ? ink : '#E0A95F'}/>
+      </g>
+      {!symbolOnly && (
+        <g transform="translate(215, 0)">
+          <text x="0" y="100"
+            fontFamily="Fraunces, serif" fontWeight="600" fontSize="64"
+            letterSpacing="-2" fill={ink}>NutriTrack</text>
+          <line x1="2" y1="118" x2="60" y2="118" stroke={variant==='dark' ? '#7DBA8A' : '#1E6E47'} strokeWidth="2"/>
+          <text x="70" y="123"
+            fontFamily="Inter, sans-serif" fontWeight="500" fontSize="12"
+            letterSpacing="4" fill={variant==='dark' ? '#A8B0A2' : '#5a6a5e'}>CLINICAL NUTRITION</text>
+        </g>
+      )}
+    </svg>
+  );
+}
+
+// ---------- LOGO 4: Modern abstract — bowl + data bars ----------
+// Concept: a half-circle "plate/bowl" cradling vertical data bars that grow into a sprout
+function Logo4({ variant = 'light', symbolOnly = false }) {
+  const ink = variant === 'dark' ? '#F4F1EA' : '#0F2A22';
+  const accent = variant === 'mono' ? ink : '#2E8B5F';
+  const warm = variant === 'mono' ? ink : '#D97757';
+  return (
+    <svg viewBox={symbolOnly ? '0 0 200 200' : '0 0 620 180'} xmlns="http://www.w3.org/2000/svg" aria-label="NutriTrack logo">
+      <g transform={symbolOnly ? 'translate(20,30)' : 'translate(10,20)'}>
+        {/* bowl */}
+        <path d="M 20 90
+                 A 60 60 0 0 0 140 90 Z"
+              fill={variant==='dark' ? '#1A4A36' : '#0F2A22'}/>
+        {/* data bars rising from bowl */}
+        <rect x="40" y="55" width="12" height="35" rx="2" fill={accent} opacity="0.55"/>
+        <rect x="58" y="40" width="12" height="50" rx="2" fill={accent} opacity="0.75"/>
+        <rect x="76" y="22" width="12" height="68" rx="2" fill={accent}/>
+        {/* sprout leaves on tallest bar */}
+        <path d="M 82 22 C 70 14, 64 22, 70 30 C 76 30, 82 26, 82 22 Z" fill={accent}/>
+        <path d="M 82 22 C 94 14, 100 22, 94 30 C 88 30, 82 26, 82 22 Z" fill={accent}/>
+        <path d="M 82 22 L 82 14" stroke={accent} strokeWidth="2.5" strokeLinecap="round"/>
+        {/* shortest bar */}
+        <rect x="94" y="60" width="12" height="30" rx="2" fill={warm} opacity="0.85"/>
+        <rect x="112" y="48" width="12" height="42" rx="2" fill={warm} opacity="0.65"/>
+      </g>
+      {!symbolOnly && (
+        <g transform="translate(195, 0)">
+          <text x="0" y="88"
+            fontFamily="Manrope, sans-serif" fontWeight="800" fontSize="58"
+            letterSpacing="-2.5" fill={ink}>nutri<tspan fill={accent}>track</tspan></text>
+          <text x="2" y="118"
+            fontFamily="Inter, sans-serif" fontWeight="500" fontSize="13"
+            letterSpacing="3" fill={variant==='dark' ? '#A8B0A2' : '#6b7066'}>Evidence-based nutrition tools</text>
+        </g>
+      )}
+    </svg>
+  );
+}
+
+// ---------- Logo card layout ----------
+function LogoCard({ title, desc, tags, palette, Logo, hasSymbolOnly = true, filename }) {
+  const ref = React.useRef(null);
+
+  const downloadSVG = (which) => {
+    const node = ref.current?.querySelector(`[data-export="${which}"] svg`);
+    if (!node) return;
+    const xml = new XMLSerializer().serializeToString(node);
+    const blob = new Blob([`<?xml version="1.0" encoding="UTF-8"?>\n` + xml], {type:'image/svg+xml'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `${filename}-${which}.svg`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className="logo-frame" ref={ref}>
+      <div className="logo-stage checker" data-export="full">
+        <Logo variant="light"/>
+      </div>
+      <div className="variant-row">
+        <div className="variant-cell dark" data-export="dark">
+          <Logo variant="dark"/>
+        </div>
+        <div className="variant-cell mono" data-export="mono">
+          <Logo variant="mono"/>
+        </div>
+        {hasSymbolOnly && (
+          <div className="variant-cell checker" data-export="symbol" style={{padding:8}}>
+            <Logo variant="light" symbolOnly />
+          </div>
+        )}
+      </div>
+      <div className="logo-meta">
+        <div className="logo-name">{title}</div>
+        <div className="logo-desc">{desc}</div>
+        <div className="logo-tags">{tags.map(t => <span key={t} className="tag">{t}</span>)}</div>
+        <div className="palette">
+          {palette.map((c,i) => <div key={i} className="swatch" style={{background:c}} title={c}/>)}
+        </div>
+        <div style={{display:'flex', gap:8, flexWrap:'wrap'}}>
+          <button className="download" onClick={() => downloadSVG('full')}>Download SVG</button>
+          {hasSymbolOnly && <button className="download" onClick={() => downloadSVG('symbol')}>Mark only</button>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------- Brief artboard ----------
+function Brief() {
+  return (
+    <div className="logo-frame">
+      <div className="brief">
+        <h2>NutriTrack — Logo exploration</h2>
+        <p>Four directions for a nutrition app aimed at <strong>professionals</strong> (RDs, clinicians, sports nutritionists). Each is delivered as a transparent SVG with a wordmark, a dark-background lockup, a single-color version, and an icon-only mark.</p>
+        <p>The palette stays grounded in a clinical forest green with a single warm accent for vitality — avoiding the supermarket-bright greens that would read as consumer-grade.</p>
+        <dl className="kv">
+          <dt>Audience</dt><dd>Healthcare & nutrition professionals</dd>
+          <dt>Tone</dt><dd>Clinical, trustworthy, modern</dd>
+          <dt>Avoids</dt><dd>Cartoon fruit, neon greens, gradients</dd>
+          <dt>Formats</dt><dd>SVG · transparent · scalable</dd>
+        </dl>
+        <p style={{marginTop:18, fontSize:12, color:'#8a8f86'}}>Tap <em>Download SVG</em> on any option to grab a transparent file. Use the dark / mono / mark-only strip below each logo to preview lockups.</p>
+      </div>
+    </div>
+  );
+}
+
+// ---------- App ----------
+function App() {
+  return (
+    <DesignCanvas>
+      <DCSection id="brief" title="Brief">
+        <DCArtboard id="brief-card" label="Direction & constraints" width={520} height={520}>
+          <Brief/>
+        </DCArtboard>
+      </DCSection>
+      <DCSection id="logos" title="Logo directions">
+        <DCArtboard id="logo-1" label="01 — Pulse Wordmark" width={720} height={520}>
+          <LogoCard
+            title="01 · Pulse Wordmark"
+            desc="A confident sans-serif wordmark with a leaf-dot above the ‘i’ and a clinical pulse line threading through the letters. Reads as both data and nutrition."
+            tags={['Wordmark', 'Pulse line', 'Manrope 800']}
+            palette={['#0F2A22', '#2E8B5F', '#F4F1EA']}
+            Logo={Logo1}
+            hasSymbolOnly={false}
+            filename="nutritrack-01-pulse"
+          />
+        </DCArtboard>
+        <DCArtboard id="logo-2" label="02 — Tracking Ring" width={720} height={520}>
+          <LogoCard
+            title="02 · Tracking Ring"
+            desc="A leaf nested inside a 3/4 progress ring — direct metaphor for tracking macros, goals, or patient adherence. Strongest ‘app icon’ candidate."
+            tags={['Combination mark', 'App-icon ready', 'Geometric']}
+            palette={['#0F4C3A', '#2E8B5F', '#7DBA8A', '#F4F1EA']}
+            Logo={Logo2}
+            filename="nutritrack-02-ring"
+          />
+        </DCArtboard>
+        <DCArtboard id="logo-3" label="03 — Leaf Monogram" width={720} height={520}>
+          <LogoCard
+            title="03 · Leaf Monogram"
+            desc="An ‘N’ carved out of a leaf silhouette, paired with a serif wordmark and ‘CLINICAL NUTRITION’ tag. The most editorial / premium direction."
+            tags={['Monogram', 'Editorial', 'Fraunces']}
+            palette={['#0F2A22', '#1E6E47', '#E0A95F']}
+            Logo={Logo3}
+            filename="nutritrack-03-monogram"
+          />
+        </DCArtboard>
+        <DCArtboard id="logo-4" label="04 — Data Plate" width={720} height={520}>
+          <LogoCard
+            title="04 · Data Plate"
+            desc="A bowl cradling vertical bars that rise into a sprout — nutrition meets analytics. The most expressive direction; uses a warm coral accent."
+            tags={['Pictorial', 'Data viz', 'Two-color']}
+            palette={['#0F2A22', '#2E8B5F', '#D97757']}
+            Logo={Logo4}
+            filename="nutritrack-04-data-plate"
+          />
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

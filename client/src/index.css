@@ -1,1 +1,115 @@
 @import "tailwindcss";
+
+:root {
+  --color-ink: #0F2A22;
+  --color-accent: #2E8B5F;
+  --color-accent-hover: #1A6B45;
+  --color-accent-soft: #7DBA8A;
+  --color-accent-tint: #ECF2ED;
+  --color-paper: #F4F1EA;
+  --color-paper-warm: #FAF8F2;
+  --color-stone: #6B7066;
+  --color-rule: #DDD7CB;
+
+  --font-display: 'Manrope', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Manrope', system-ui, sans-serif;
+
+  /* Remap Tailwind grays to warm brand neutrals */
+  --color-gray-50: #FAF8F2;
+  --color-gray-100: #F4F1EA;
+  --color-gray-200: #DDD7CB;
+  --color-gray-300: #C8C2B5;
+  --color-gray-400: #9CA098;
+  --color-gray-500: #6B7066;
+  --color-gray-600: #4F544C;
+  --color-gray-700: #2F3530;
+  --color-gray-800: #1C2620;
+  --color-gray-900: #0F2A22;
+
+  /* Brand greens replace Tailwind green/emerald */
+  --color-green-50:  #ECF2ED;
+  --color-green-100: #DCEBE0;
+  --color-green-200: #BFDCC7;
+  --color-green-300: #9CC9A8;
+  --color-green-400: #7DBA8A;
+  --color-green-500: #2E8B5F;
+  --color-green-600: #2E8B5F;
+  --color-green-700: #1A6B45;
+  --color-green-800: #14533A;
+  --color-green-900: #0F2A22;
+
+  --color-emerald-50:  #ECF2ED;
+  --color-emerald-100: #ECF2ED;
+  --color-emerald-200: #BFDCC7;
+  --color-emerald-300: #9CC9A8;
+  --color-emerald-400: #7DBA8A;
+  --color-emerald-500: #2E8B5F;
+  --color-emerald-600: #2E8B5F;
+  --color-emerald-700: #1A6B45;
+  --color-emerald-800: #2E8B5F;
+  --color-emerald-900: #0F2A22;
+
+  /* No blue in the brand — remap blue-* to brand green/ink */
+  --color-blue-50:  #ECF2ED;
+  --color-blue-100: #DCEBE0;
+  --color-blue-200: #BFDCC7;
+  --color-blue-300: #9CC9A8;
+  --color-blue-400: #7DBA8A;
+  --color-blue-500: #2E8B5F;
+  --color-blue-600: #2E8B5F;
+  --color-blue-700: #1A6B45;
+  --color-blue-800: #14533A;
+  --color-blue-900: #0F2A22;
+
+  /* sky-* (used by macro chip "F") — warm copper instead of sky blue */
+  --color-sky-50:  #FBEFD6;
+  --color-sky-100: #FBEFD6;
+  --color-sky-200: #F2D9A8;
+  --color-sky-300: #E6BE74;
+  --color-sky-400: #D89C46;
+  --color-sky-500: #B07526;
+  --color-sky-600: #92651A;
+  --color-sky-700: #92651A;
+  --color-sky-800: #6B4A14;
+  --color-sky-900: #4A3210;
+
+  /* indigo-* — fold to ink */
+  --color-indigo-500: #2E8B5F;
+  --color-indigo-600: #2E8B5F;
+  --color-indigo-700: #1A6B45;
+  --color-indigo-800: #0F2A22;
+  --color-indigo-900: #0F2A22;
+}
+
+html, body, #root {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+
+/* Inputs — focus ring in brand accent */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px rgba(46, 139, 95, 0.18);
+}
+
+/* Selection */
+::selection {
+  background: var(--color-accent-tint);
+  color: var(--color-ink);
+}

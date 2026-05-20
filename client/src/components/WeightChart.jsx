@@ -8,7 +8,7 @@ import {
   ReferenceLine,
 } from 'recharts';
 
-const GREEN = '#1D9E75';
+const GREEN = '#2E8B5F';
 const RED = '#D85A30';
 
 function formatTick(date) {

@@ -1,5 +1,5 @@
 const MS_DAY = 1000 * 60 * 60 * 24;
-const GREEN = '#1D9E75';
+const GREEN = '#2E8B5F';
 const AMBER = '#BA7517';
 
 function toNum(v) {

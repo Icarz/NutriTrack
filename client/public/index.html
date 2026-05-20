@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>NutriTrack — Brand Pack</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0F2A22;
+    --ink-2: #1A4A36;
+    --paper: #F4F1EA;
+    --paper-warm: #FAF8F2;
+    --accent: #2E8B5F;
+    --accent-soft: #7DBA8A;
+    --accent-tint: #ECF2ED;
+    --rule: #DDD7CB;
+    --muted: #6B7066;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper-warm); color: var(--ink); font-family: 'Inter', sans-serif; }
+  body { padding: 64px 56px 96px; max-width: 1180px; margin: 0 auto; }
+
+  header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding-bottom: 32px; border-bottom: 1px solid var(--rule); margin-bottom: 48px;
+  }
+  .crumb { font-family: 'Manrope', sans-serif; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  h1 { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 38px; letter-spacing: -0.02em; margin: 0; }
+  .sub { color: var(--muted); font-size: 15px; margin-top: 6px; max-width: 540px; line-height: 1.55; }
+
+  header .download-all {
+    font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 600;
+    color: var(--paper); background: var(--ink);
+    padding: 10px 18px; border-radius: 999px; text-decoration: none;
+    border: 1px solid var(--ink);
+    transition: opacity .15s;
+  }
+  header .download-all:hover { opacity: 0.85; }
+
+  section { margin-bottom: 56px; }
+  section h2 {
+    font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 13px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+    margin: 0 0 18px; padding-bottom: 10px; border-bottom: 1px solid var(--rule);
+  }
+
+  /* Logo stage */
+  .logo-grid {
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 16px;
+  }
+  .logo-tile {
+    border-radius: 12px; padding: 32px; display: flex; align-items: center; justify-content: center;
+    min-height: 200px; position: relative; overflow: hidden;
+  }
+  .logo-tile svg { width: 100%; max-width: 360px; height: auto; }
+  .logo-tile.checker {
+    background-image:
+      linear-gradient(45deg, #ece8de 25%, transparent 25%),
+      linear-gradient(-45deg, #ece8de 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #ece8de 75%),
+      linear-gradient(-45deg, transparent 75%, #ece8de 75%);
+    background-size: 14px 14px;
+    background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+    background-color: var(--paper);
+  }
+  .logo-tile.dark { background: var(--ink); }
+  .logo-tile.mono { background: var(--paper-warm); border: 1px solid var(--rule); color: #1A2421; }
+  .tile-label {
+    position: absolute; top: 14px; left: 16px;
+    font-family: 'Manrope', sans-serif; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .checker .tile-label { color: var(--muted); }
+  .dark .tile-label { color: rgba(244,241,234,0.6); }
+  .mono .tile-label { color: var(--muted); }
+
+  .download-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .download-row a {
+    font-family: 'Manrope', sans-serif; font-size: 12px; font-weight: 600;
+    color: var(--ink); text-decoration: none;
+    border: 1px solid var(--rule); padding: 8px 14px; border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff;
+    transition: border-color .15s, color .15s;
+  }
+  .download-row a:hover { border-color: var(--ink); }
+  .download-row svg { width: 12px; height: 12px; }
+
+  /* Palette */
+  .palette { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .swatch {
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--rule);
+    display: flex; flex-direction: column;
+    cursor: pointer;
+    transition: transform .12s ease;
+  }
+  .swatch:hover { transform: translateY(-2px); }
+  .swatch .chip { height: 120px; }
+  .swatch .meta { padding: 12px 14px 14px; background: #fff; }
+  .swatch .name { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 13px; }
+  .swatch .role { font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+  .swatch .hex { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: var(--ink); margin-top: 8px; letter-spacing: -0.01em; }
+  .copied { color: var(--accent) !important; }
+
+  /* Usage */
+  .usage { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .usage-card {
+    background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: 22px 24px;
+  }
+  .usage-card h3 { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 15px; margin: 0 0 8px; }
+  .usage-card p { font-size: 13.5px; line-height: 1.6; color: var(--ink); margin: 0 0 10px; opacity: 0.85; }
+  .usage-card .kv { display: grid; grid-template-columns: 96px 1fr; gap: 8px 16px; font-size: 13px; margin-top: 10px; }
+  .usage-card .kv dt { color: var(--muted); font-weight: 500; }
+  .usage-card .kv dd { margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+  /* Code block */
+  pre.code {
+    background: #11201a; color: #e4ddc9; border-radius: 10px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px; line-height: 1.65;
+    padding: 18px 20px; overflow: auto;
+    margin: 14px 0 0;
+  }
+  pre.code .k { color: #7DBA8A; }
+  pre.code .v { color: #E0A95F; }
+
+  /* footer */
+  footer {
+    margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--rule);
+    font-size: 12px; color: var(--muted); display: flex; justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="crumb">NutriTrack · Brand Pack</div>
+    <h1>Pulse Wordmark — assets &amp; tokens</h1>
+    <div class="sub">Drop the SVG into your app, copy the hex tokens into your stylesheet. The wordmark uses Manrope&nbsp;800; if Manrope isn't loaded, the SVG falls back to the system sans.</div>
+  </div>
+  <a class="download-all" href="nutritrack-logo.svg" download>Download primary SVG ↓</a>
+</header>
+
+<!-- LOGO LOCKUPS -->
+<section>
+  <h2>Logo · Lockups</h2>
+  <div class="logo-grid">
+    <div class="logo-tile checker">
+      <span class="tile-label">Primary · transparent</span>
+      <!-- inline copy of the primary SVG -->
+      <svg viewBox="0 0 620 180" xmlns="http://www.w3.org/2000/svg" aria-label="NutriTrack">
+        <path d="M 30 120 L 150 120 L 168 96 L 188 140 L 208 108 L 224 120 L 590 120"
+              fill="none" stroke="#2E8B5F" stroke-width="3"
+              stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+        <text x="30" y="100" font-family="Manrope, sans-serif" font-weight="800" font-size="84" letter-spacing="-3" fill="#0F2A22">Nutr<tspan dx="-2">i</tspan>Track</text>
+        <g transform="translate(258, 26)">
+          <path d="M 0 16 C 0 6, 8 0, 16 0 C 16 10, 10 18, 0 16 Z" fill="#2E8B5F"/>
+          <path d="M 2 14 L 13 4" stroke="#0F2A22" stroke-opacity="0.35" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+        </g>
+      </svg>
+    </div>
+    <div class="logo-tile dark">
+      <span class="tile-label">Dark surfaces</span>
+      <svg viewBox="0 0 620 180" xmlns="http://www.w3.org/2000/svg" aria-label="NutriTrack">
+        <path d="M 30 120 L 150 120 L 168 96 L 188 140 L 208 108 L 224 120 L 590 120"
+              fill="none" stroke="#7DBA8A" stroke-width="3"
+              stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+        <text x="30" y="100" font-family="Manrope, sans-serif" font-weight="800" font-size="84" letter-spacing="-3" fill="#F4F1EA">Nutr<tspan dx="-2">i</tspan>Track</text>
+        <g transform="translate(258, 26)">
+          <path d="M 0 16 C 0 6, 8 0, 16 0 C 16 10, 10 18, 0 16 Z" fill="#7DBA8A"/>
+          <path d="M 2 14 L 13 4" stroke="#0F2A22" stroke-opacity="0.6" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+        </g>
+      </svg>
+    </div>
+    <div class="logo-tile mono">
+      <span class="tile-label">Single-color · currentColor</span>
+      <svg viewBox="0 0 620 180" xmlns="http://www.w3.org/2000/svg" aria-label="NutriTrack" style="color:#0F2A22">
+        <g fill="currentColor" stroke="currentColor">
+          <path d="M 30 120 L 150 120 L 168 96 L 188 140 L 208 108 L 224 120 L 590 120"
+                fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+          <text x="30" y="100" font-family="Manrope, sans-serif" font-weight="800" font-size="84" letter-spacing="-3" stroke="none">Nutr<tspan dx="-2">i</tspan>Track</text>
+          <g transform="translate(258, 26)" stroke="none">
+            <path d="M 0 16 C 0 6, 8 0, 16 0 C 16 10, 10 18, 0 16 Z"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="download-row">
+    <a href="nutritrack-logo.svg" download>
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 2v6m0 0L3 5.5M6 8l3-2.5M2.5 10h7"/></svg>
+      nutritrack-logo.svg
+    </a>
+    <a href="nutritrack-logo-dark.svg" download>
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 2v6m0 0L3 5.5M6 8l3-2.5M2.5 10h7"/></svg>
+      nutritrack-logo-dark.svg
+    </a>
+    <a href="nutritrack-logo-mono.svg" download>
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 2v6m0 0L3 5.5M6 8l3-2.5M2.5 10h7"/></svg>
+      nutritrack-logo-mono.svg
+    </a>
+  </div>
+</section>
+
+<!-- PALETTE -->
+<section>
+  <h2>Color · Palette (click to copy hex)</h2>
+  <div class="palette" id="palette">
+    <div class="swatch" data-hex="#0F2A22">
+      <div class="chip" style="background:#0F2A22"></div>
+      <div class="meta">
+        <div class="name">Forest Ink</div>
+        <div class="role">Primary wordmark · headers · primary buttons</div>
+        <div class="hex">#0F2A22</div>
+      </div>
+    </div>
+    <div class="swatch" data-hex="#2E8B5F">
+      <div class="chip" style="background:#2E8B5F"></div>
+      <div class="meta">
+        <div class="name">Pulse Green</div>
+        <div class="role">Brand accent · leaf · pulse line · links</div>
+        <div class="hex">#2E8B5F</div>
+      </div>
+    </div>
+    <div class="swatch" data-hex="#7DBA8A">
+      <div class="chip" style="background:#7DBA8A"></div>
+      <div class="meta">
+        <div class="name">Sage</div>
+        <div class="role">Accent on dark · success states · chart fills</div>
+        <div class="hex">#7DBA8A</div>
+      </div>
+    </div>
+    <div class="swatch" data-hex="#F4F1EA">
+      <div class="chip" style="background:#F4F1EA; border:1px solid var(--rule)"></div>
+      <div class="meta">
+        <div class="name">Paper</div>
+        <div class="role">App background · cards on dark</div>
+        <div class="hex">#F4F1EA</div>
+      </div>
+    </div>
+    <div class="swatch" data-hex="#6B7066">
+      <div class="chip" style="background:#6B7066"></div>
+      <div class="meta">
+        <div class="name">Stone</div>
+        <div class="role">Secondary text · captions · meta</div>
+        <div class="hex">#6B7066</div>
+      </div>
+    </div>
+    <div class="swatch" data-hex="#DDD7CB">
+      <div class="chip" style="background:#DDD7CB"></div>
+      <div class="meta">
+        <div class="name">Rule</div>
+        <div class="role">Borders · dividers · inactive UI</div>
+        <div class="hex">#DDD7CB</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USAGE / TYPOGRAPHY -->
+<section>
+  <h2>Tokens &amp; typography</h2>
+  <div class="usage">
+    <div class="usage-card">
+      <h3>CSS custom properties</h3>
+      <p>Drop this into your global stylesheet (e.g. <code>:root</code> in <code>app.css</code>) and reference with <code>var(--color-accent)</code>.</p>
+<pre class="code">:root {
+  <span class="k">--color-ink</span>:        <span class="v">#0F2A22</span>;
+  <span class="k">--color-accent</span>:     <span class="v">#2E8B5F</span>;
+  <span class="k">--color-accent-soft</span>:<span class="v">#7DBA8A</span>;
+  <span class="k">--color-paper</span>:      <span class="v">#F4F1EA</span>;
+  <span class="k">--color-paper-warm</span>: <span class="v">#FAF8F2</span>;
+  <span class="k">--color-stone</span>:      <span class="v">#6B7066</span>;
+  <span class="k">--color-rule</span>:       <span class="v">#DDD7CB</span>;
+
+  <span class="k">--font-display</span>: 'Manrope', system-ui, sans-serif;
+  <span class="k">--font-body</span>:    'Inter',   system-ui, sans-serif;
+}</pre>
+    </div>
+    <div class="usage-card">
+      <h3>Type system</h3>
+      <p>The logo is set in <strong>Manrope&nbsp;800</strong>. Pair it with Inter for body copy — both are free on Google Fonts.</p>
+      <dl class="kv">
+        <dt>Display</dt><dd>Manrope · 700–800</dd>
+        <dt>Body</dt><dd>Inter · 400–600</dd>
+        <dt>Mono</dt><dd>JetBrains Mono (optional)</dd>
+        <dt>Logo size</dt><dd>min 96px wide</dd>
+        <dt>Clearspace</dt><dd>≥ 1× cap-height around the mark</dd>
+      </dl>
+    </div>
+    <div class="usage-card">
+      <h3>Do</h3>
+      <p>✓ Use the primary lockup on light surfaces.<br/>
+         ✓ Use the dark variant on <code>#0F2A22</code> or imagery.<br/>
+         ✓ Scale uniformly — the SVG has no fixed pixel size.<br/>
+         ✓ Use <code>currentColor</code> mono inside icon buttons.</p>
+    </div>
+    <div class="usage-card">
+      <h3>Don't</h3>
+      <p>✗ Recolor the leaf to anything outside the green family.<br/>
+         ✗ Stretch, rotate, or outline the wordmark.<br/>
+         ✗ Place the primary green wordmark on a low-contrast background.<br/>
+         ✗ Embed the pulse line as a separate element from the wordmark.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>NutriTrack · Pulse Wordmark · v1.0</span>
+  <span>Generated May 20, 2026</span>
+</footer>
+
+<script>
+  // Click-to-copy hex
+  document.querySelectorAll('#palette .swatch').forEach(el => {
+    el.addEventListener('click', () => {
+      const hex = el.dataset.hex;
+      navigator.clipboard?.writeText(hex);
+      const h = el.querySelector('.hex');
+      const original = h.textContent;
+      h.textContent = 'Copied!';
+      h.classList.add('copied');
+      setTimeout(() => { h.textContent = original; h.classList.remove('copied'); }, 900);
+    });
+  });
+</script>
+</body>
+</html>

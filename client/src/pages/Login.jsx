@@ -2,6 +2,37 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api/auth';
 
+function Logo() {
+  return (
+    <svg viewBox="0 0 620 180" xmlns="http://www.w3.org/2000/svg" aria-label="NutriTrack" style={{ width: '100%', maxWidth: 200, height: 'auto', display: 'block', margin: '0 auto' }}>
+      <path
+        d="M 30 120 L 150 120 L 168 96 L 188 140 L 208 108 L 224 120 L 590 120"
+        fill="none"
+        stroke="#2E8B5F"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.85"
+      />
+      <text
+        x="30"
+        y="100"
+        fontFamily="Manrope, sans-serif"
+        fontWeight="800"
+        fontSize="84"
+        letterSpacing="-3"
+        fill="#0F2A22"
+      >
+        NutriTrack
+      </text>
+      <g transform="translate(258, 26)">
+        <path d="M 0 16 C 0 6, 8 0, 16 0 C 16 10, 10 18, 0 16 Z" fill="#2E8B5F" />
+        <path d="M 2 14 L 13 4" stroke="#0F2A22" strokeOpacity="0.35" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+      </g>
+    </svg>
+  );
+}
+
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -28,42 +59,105 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'var(--color-paper)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 24,
+      }}
+    >
       <form
         onSubmit={onSubmit}
-        className="w-full max-w-sm bg-white border border-gray-200 rounded-lg p-6 shadow-sm"
+        style={{
+          width: '100%',
+          maxWidth: 400,
+          background: '#ffffff',
+          border: '1px solid var(--color-rule)',
+          borderRadius: 12,
+          padding: 32,
+          boxShadow: '0 1px 2px rgba(15, 42, 34, 0.04)',
+        }}
       >
-        <h1 className="text-xl font-semibold mb-1">NutriTrack</h1>
-        <p className="text-sm text-gray-500 mb-6">Sign in to your account</p>
+        <div style={{ marginBottom: 24 }}>
+          <Logo />
+        </div>
 
-        <label className="block text-sm font-medium mb-1">Email</label>
+        <p style={{ fontSize: 14, color: 'var(--color-stone)', textAlign: 'center', marginBottom: 24 }}>
+          Sign in to your account
+        </p>
+
+        <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--color-ink)', marginBottom: 6 }}>
+          Email
+        </label>
         <input
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 mb-4"
+          style={{
+            width: '100%',
+            border: '1px solid var(--color-rule)',
+            borderRadius: 8,
+            padding: '10px 12px',
+            marginBottom: 16,
+            fontSize: 14,
+            fontFamily: "'Inter', system-ui, sans-serif",
+            background: '#ffffff',
+            color: 'var(--color-ink)',
+          }}
         />
 
-        <label className="block text-sm font-medium mb-1">Password</label>
+        <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--color-ink)', marginBottom: 6 }}>
+          Password
+        </label>
         <input
           type="password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 mb-4"
+          style={{
+            width: '100%',
+            border: '1px solid var(--color-rule)',
+            borderRadius: 8,
+            padding: '10px 12px',
+            marginBottom: 20,
+            fontSize: 14,
+            fontFamily: "'Inter', system-ui, sans-serif",
+            background: '#ffffff',
+            color: 'var(--color-ink)',
+          }}
         />
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-gray-900 text-white rounded py-2 font-medium hover:bg-gray-800 disabled:opacity-60"
+          style={{
+            width: '100%',
+            background: 'var(--color-accent)',
+            color: '#ffffff',
+            borderRadius: 8,
+            padding: '11px 16px',
+            fontWeight: 600,
+            fontSize: 14,
+            fontFamily: "'Inter', system-ui, sans-serif",
+            border: 'none',
+            cursor: loading ? 'default' : 'pointer',
+            opacity: loading ? 0.6 : 1,
+            transition: 'background .15s',
+          }}
+          onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = 'var(--color-accent-hover)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--color-accent)'; }}
         >
-          {loading ? 'Signing in...' : 'Sign in'}
+          {loading ? 'Signing in…' : 'Sign in'}
         </button>
 
         {error && (
-          <p className="mt-3 text-sm text-red-600 text-center">{error}</p>
+          <p style={{ marginTop: 14, fontSize: 13, color: '#B43A2E', textAlign: 'center' }}>
+            {error}
+          </p>
         )}
       </form>
     </div>

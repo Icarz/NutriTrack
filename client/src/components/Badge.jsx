@@ -1,14 +1,26 @@
-const STATUS_COLORS = {
-  active: 'bg-emerald-100 text-emerald-800',
-  new: 'bg-purple-100 text-purple-800',
-  paused: 'bg-amber-100 text-amber-800',
-  overdue: 'bg-red-100 text-red-800',
+const STATUS_STYLES = {
+  active: { background: '#ECF2ED', color: '#2E8B5F' },
+  new: { background: '#F1E8FA', color: '#6B36A8' },
+  paused: { background: '#FBEFD6', color: '#92651A' },
+  overdue: { background: '#FBE0DA', color: '#B43A2E' },
 };
 
 export default function Badge({ status }) {
-  const cls = STATUS_COLORS[status] || 'bg-gray-100 text-gray-800';
+  const s = STATUS_STYLES[status] || { background: '#EFEDE6', color: '#4F544C' };
   return (
-    <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${cls}`}>
+    <span
+      style={{
+        display: 'inline-block',
+        padding: '2px 8px',
+        borderRadius: 999,
+        fontSize: 11,
+        fontWeight: 600,
+        textTransform: 'capitalize',
+        fontFamily: "'Inter', system-ui, sans-serif",
+        background: s.background,
+        color: s.color,
+      }}
+    >
       {status}
     </span>
   );

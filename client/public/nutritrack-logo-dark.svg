@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 180" role="img" aria-label="NutriTrack">
+  <title>NutriTrack — dark background</title>
+  <defs>
+    
+  </defs>
+
+  <path d="M 30 120 L 150 120 L 168 96 L 188 140 L 208 108 L 224 120 L 590 120" fill="none" stroke="#7DBA8A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"></path>
+
+  <text x="30" y="100" class="nt-wordmark">Nutr<tspan dx="-2">i</tspan>Track</text>
+
+  <g transform="translate(258, 26)">
+    <path d="M 0 16 C 0 6, 8 0, 16 0 C 16 10, 10 18, 0 16 Z" fill="#7DBA8A"></path>
+    <path d="M 2 14 L 13 4" stroke="#0F2A22" stroke-opacity="0.6" stroke-width="1.2" stroke-linecap="round" fill="none"></path>
+  </g>
+</svg>

@@ -1,9 +1,40 @@
 export default function StatCard({ label, value, hint }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4">
-      <div className="text-xs uppercase tracking-wide text-gray-500">{label}</div>
-      <div className="text-2xl font-semibold mt-1">{value}</div>
-      {hint && <div className="text-xs text-gray-500 mt-1">{hint}</div>}
+    <div
+      style={{
+        background: '#ffffff',
+        border: '1px solid var(--color-rule)',
+        borderRadius: 12,
+        padding: 18,
+      }}
+    >
+      <div
+        style={{
+          fontSize: 11,
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em',
+          color: 'var(--color-stone)',
+          fontFamily: "'Manrope', sans-serif",
+          fontWeight: 600,
+        }}
+      >
+        {label}
+      </div>
+      <div
+        style={{
+          fontFamily: "'Manrope', sans-serif",
+          fontWeight: 700,
+          fontSize: 28,
+          color: 'var(--color-ink)',
+          marginTop: 6,
+          letterSpacing: '-0.02em',
+        }}
+      >
+        {value}
+      </div>
+      {hint && (
+        <div style={{ fontSize: 12, color: 'var(--color-stone)', marginTop: 4 }}>{hint}</div>
+      )}
     </div>
   );
 }
