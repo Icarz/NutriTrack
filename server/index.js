@@ -1,4 +1,6 @@
 require('dotenv').config();
+require('./scripts/check-env');
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -13,15 +15,10 @@ const plansRouter = require('./routes/plans');
 const mealsRouter = require('./routes/meals');
 const auth = require('./middleware/auth');
 
-const { JWT_SECRET, SUPER_ADMIN_SECRET, PORT, CLIENT_URL } = process.env;
+const { PORT, CLIENT_URL } = process.env;
 
-if (!JWT_SECRET || JWT_SECRET.length < 32) {
-  console.error('FATAL: JWT_SECRET missing or under 32 chars');
-  process.exit(1);
-}
-if (!SUPER_ADMIN_SECRET || SUPER_ADMIN_SECRET.length < 32) {
-  console.error('FATAL: SUPER_ADMIN_SECRET missing or under 32 chars');
-  process.exit(1);
+if (!process.env.NODE_ENV) {
+  console.warn('WARNING: NODE_ENV is not set. Defaulting to development.');
 }
 
 const app = express();
@@ -39,6 +36,15 @@ app.use('/api/clients', goalsRouter);
 app.use('/api', auth, logsRouter);
 app.use('/api', plansRouter);
 app.use('/api', mealsRouter);
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  const status = err.status || err.statusCode || 500;
+  const message = (status === 500 && process.env.NODE_ENV === 'production')
+    ? 'Internal server error'
+    : err.message;
+  res.status(status).json({ error: message });
+});
 
 const port = PORT || 4000;
 app.listen(port, () => console.log(`NutriTrack API on :${port}`));

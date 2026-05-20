@@ -1,7 +1,10 @@
 const express = require('express');
 const pool = require('../db/pool');
+const { sanitizeBody } = require('../lib/sanitize');
 
 const router = express.Router();
+
+const LOG_LIMITS = { session_notes: 2000, plan_adjustments: 2000 };
 
 const UPDATABLE_COLS = [
   'log_date',
@@ -159,6 +162,8 @@ router.post('/clients/:id/logs', async (req, res) => {
   const clientId = parseInt(req.params.id, 10);
   if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
+  const s = sanitizeBody(body, LOG_LIMITS);
+  if (s.error) return res.status(400).json({ error: s.error });
 
   const weight = toNum(body.weight);
   if (weight == null || weight <= 0) {
@@ -230,6 +235,8 @@ router.put('/logs/:logId', async (req, res) => {
   const logId = parseInt(req.params.logId, 10);
   if (!Number.isInteger(logId)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
+  const s = sanitizeBody(body, LOG_LIMITS);
+  if (s.error) return res.status(400).json({ error: s.error });
 
   const fields = [];
   const values = [];

@@ -1,10 +1,13 @@
 const express = require('express');
 const pool = require('../db/pool');
 const auth = require('../middleware/auth');
+const { sanitizeBody } = require('../lib/sanitize');
 
 const router = express.Router();
 
 router.use(auth);
+
+const PLAN_LIMITS = { notes: 2000 };
 
 async function verifyClient(clientId, nutritionistId) {
   const { rows } = await pool.query(
@@ -180,7 +183,10 @@ router.get('/clients/:id/plans', async (req, res) => {
 router.post('/clients/:id/plans', async (req, res) => {
   const clientId = parseInt(req.params.id, 10);
   if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
-  const { week_start, notes } = req.body || {};
+  const body = req.body || {};
+  const s = sanitizeBody(body, PLAN_LIMITS);
+  if (s.error) return res.status(400).json({ error: s.error });
+  const { week_start, notes } = body;
   if (!week_start) return res.status(400).json({ error: 'week_start required' });
   try {
     const client = await verifyClient(clientId, req.nutritionist.id);
@@ -219,6 +225,8 @@ router.put('/plans/:planId', async (req, res) => {
   const planId = parseInt(req.params.planId, 10);
   if (!Number.isInteger(planId)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
+  const s = sanitizeBody(body, PLAN_LIMITS);
+  if (s.error) return res.status(400).json({ error: s.error });
   const allowed = ['week_start', 'notes'];
   const sets = [];
   const vals = [];

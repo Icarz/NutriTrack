@@ -1,10 +1,13 @@
 const express = require('express');
 const pool = require('../db/pool');
 const auth = require('../middleware/auth');
+const { sanitizeBody } = require('../lib/sanitize');
 
 const router = express.Router({ mergeParams: true });
 
 router.use(auth);
+
+const GOAL_LIMITS = { notes: 2000 };
 
 async function verifyClient(clientId, nutritionistId) {
   const { rows } = await pool.query(
@@ -87,6 +90,8 @@ router.post('/:id/goals', async (req, res) => {
   const clientId = parseInt(req.params.id, 10);
   if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
+  const s = sanitizeBody(body, GOAL_LIMITS);
+  if (s.error) return res.status(400).json({ error: s.error });
   const verr = validateGoalBody(body, { requireFields: true });
   if (verr) return res.status(400).json({ error: verr });
   try {
@@ -120,6 +125,8 @@ router.put('/:id/goals', async (req, res) => {
   const clientId = parseInt(req.params.id, 10);
   if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
+  const s = sanitizeBody(body, GOAL_LIMITS);
+  if (s.error) return res.status(400).json({ error: s.error });
   const verr = validateGoalBody(body, { requireFields: false });
   if (verr) return res.status(400).json({ error: verr });
   const allowed = ['target_weight', 'target_date', 'daily_calories', 'protein_g', 'carbs_g', 'fat_g', 'notes'];

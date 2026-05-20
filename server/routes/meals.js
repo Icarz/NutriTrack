@@ -1,12 +1,14 @@
 const express = require('express');
 const pool = require('../db/pool');
 const auth = require('../middleware/auth');
+const { sanitizeBody } = require('../lib/sanitize');
 
 const router = express.Router();
 
 router.use(auth);
 
 const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack'];
+const MEAL_LIMITS = { description: 500 };
 
 async function verifyPlan(planId, nutritionistId) {
   const { rows } = await pool.query(
@@ -36,10 +38,13 @@ router.post('/plans/:planId/meals', async (req, res) => {
   const planId = parseInt(req.params.planId, 10);
   if (!Number.isInteger(planId)) return res.status(404).json({ error: 'Not found' });
 
+  const body = req.body || {};
+  const s = sanitizeBody(body, MEAL_LIMITS);
+  if (s.error) return res.status(400).json({ error: s.error });
   const {
     day_of_week, meal_type, description,
     calories, protein_g, carbs_g, fat_g,
-  } = req.body || {};
+  } = body;
 
   if (!Number.isInteger(day_of_week) || day_of_week < 0 || day_of_week > 6) {
     return res.status(400).json({ error: 'day_of_week must be integer 0-6' });
@@ -84,6 +89,8 @@ router.put('/meals/:mealId', async (req, res) => {
   if (!Number.isInteger(mealId)) return res.status(404).json({ error: 'Not found' });
 
   const body = req.body || {};
+  const s = sanitizeBody(body, MEAL_LIMITS);
+  if (s.error) return res.status(400).json({ error: s.error });
   const allowed = ['description', 'calories', 'protein_g', 'carbs_g', 'fat_g', 'meal_type'];
   const sets = [];
   const vals = [];

@@ -1,6 +1,7 @@
 const express = require('express');
 const pool = require('../db/pool');
 const auth = require('../middleware/auth');
+const { sanitizeBody } = require('../lib/sanitize');
 
 const router = express.Router();
 
@@ -10,6 +11,16 @@ const CLIENT_COLS = [
   'name', 'email', 'phone', 'age', 'gender',
   'height_cm', 'start_weight', 'allergies', 'medical_notes', 'status',
 ];
+
+const CLIENT_LIMITS = {
+  name: 255,
+  email: 255,
+  phone: 50,
+  gender: 50,
+  status: 50,
+  allergies: 2000,
+  medical_notes: 2000,
+};
 
 router.get('/', async (req, res) => {
   try {
@@ -100,6 +111,8 @@ function validateClientBody(body, { requireName }) {
 
 router.post('/', async (req, res) => {
   const body = req.body || {};
+  const s = sanitizeBody(body, CLIENT_LIMITS);
+  if (s.error) return res.status(400).json({ error: s.error });
   const err = validateClientBody(body, { requireName: true });
   if (err) return res.status(400).json({ error: err });
   try {
@@ -165,6 +178,8 @@ router.put('/:id', async (req, res) => {
   const id = parseInt(req.params.id, 10);
   if (!Number.isInteger(id)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
+  const s = sanitizeBody(body, CLIENT_LIMITS);
+  if (s.error) return res.status(400).json({ error: s.error });
   const verr = validateClientBody(body, { requireName: false });
   if (verr) return res.status(400).json({ error: verr });
   const fields = [];
