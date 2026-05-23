@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import Sidebar from '../components/Sidebar';
 import MacroChip from '../components/MacroChip';
 import MealFormPanel from '../components/MealFormPanel';
+import DietPlanPDF from '../components/DietPlanPDF';
 import { getClient } from '../api/clients';
 import {
   getPlan,
@@ -14,9 +17,8 @@ import {
   flattenPlanMeals,
 } from '../api/plans';
 
-const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const DAY_KEYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack'];
-const MEAL_LABELS = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', snack: 'Snack' };
 
 function mondayOf(date) {
   const d = new Date(date);
@@ -51,6 +53,7 @@ function weekRangeLabel(monday) {
 
 export default function DietPlan() {
   const { id: clientId, planId: planIdParam } = useParams();
+  const { t } = useTranslation();
 
   const [client, setClient] = useState(null);
   const [goal, setGoal] = useState(null);
@@ -266,7 +269,7 @@ export default function DietPlan() {
     return (
       <div className="flex min-h-screen">
         <Sidebar />
-        <main className="flex-1 p-6">Loading…</main>
+        <main className="flex-1 p-6">{t('dietPlan.loading')}</main>
       </div>
     );
   }
@@ -279,24 +282,20 @@ export default function DietPlan() {
           to={`/clients/${clientId}`}
           className="text-sm text-blue-600 hover:underline"
         >
-          ← Back to client
+          {t('dietPlan.backToClient')}
         </Link>
 
         <header className="mt-2 mb-6 flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-2xl font-bold">Diet plan builder</h1>
+            <h1 className="text-2xl font-bold">{t('dietPlan.title')}</h1>
             <p className="text-sm text-gray-600 mt-1">
-              {client ? client.name : 'Client'}
-              {goal ? (
-                <>
-                  {' · target '}
-                  <span className="font-medium">{goal.daily_calories} kcal/day</span>
-                  {' · '}
-                  <span className="font-medium">{goal.protein_g}g protein</span>
-                </>
-              ) : (
-                <span className="ml-1 text-amber-600">· No goal set</span>
-              )}
+              {goal
+                ? t('dietPlan.subtitleWithGoal', {
+                    name: client?.name || '',
+                    calories: goal.daily_calories,
+                    protein: goal.protein_g,
+                  })
+                : t('dietPlan.subtitleNoGoal', { name: client?.name || '' })}
             </p>
           </div>
 
@@ -305,7 +304,7 @@ export default function DietPlan() {
               type="button"
               onClick={() => changeWeek(-7)}
               className="px-2 py-1 border rounded hover:bg-gray-100"
-              aria-label="Previous week"
+              aria-label={t('dietPlan.prevWeek')}
             >
               ←
             </button>
@@ -316,7 +315,7 @@ export default function DietPlan() {
               type="button"
               onClick={() => changeWeek(7)}
               className="px-2 py-1 border rounded hover:bg-gray-100"
-              aria-label="Next week"
+              aria-label={t('dietPlan.nextWeek')}
             >
               →
             </button>
@@ -326,7 +325,7 @@ export default function DietPlan() {
               disabled={!prevPlanId || copying}
               className="ml-2 px-3 py-1 border rounded text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100"
             >
-              {copying ? 'Copying…' : 'Copy prev week'}
+              {copying ? t('dietPlan.copying') : t('dietPlan.copyPrevWeek')}
             </button>
             <button
               type="button"
@@ -334,9 +333,58 @@ export default function DietPlan() {
               disabled={!planId || saving}
               className="px-3 py-1 bg-blue-600 text-white rounded text-sm disabled:opacity-40 hover:bg-blue-700"
             >
-              {saving ? 'Saving…' : 'Save plan'}
+              {saving ? t('dietPlan.saving') : t('dietPlan.savePlan')}
             </button>
-            {savedFlash && <span className="text-green-600 text-sm">Saved ✓</span>}
+
+            {meals.length === 0 ? (
+              <button
+                type="button"
+                disabled
+                className="px-3 py-1 border rounded text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {t('dietPlan.noMealsToExport')}
+              </button>
+            ) : (
+              <PDFDownloadLink
+                document={
+                  <DietPlanPDF
+                    client={client}
+                    goal={goal}
+                    meals={meals}
+                    weekStart={toISODate(currentWeekStart)}
+                    labels={{
+                      dailyTotal: t('dietPlan.dailyTotal'),
+                      noGoalSet: t('client.noGoalSet'),
+                      restDay: t('client.restDay'),
+                      target: t('dietPlan.pdf.target'),
+                      daily: t('dietPlan.pdf.daily'),
+                      protein: t('dietPlan.pdf.protein'),
+                      carbs: t('dietPlan.pdf.carbs'),
+                      fat: t('dietPlan.pdf.fat'),
+                      generatedBy: t('dietPlan.pdf.generatedBy'),
+                      weekOf: t('client.weekOf'),
+                    }}
+                  />
+                }
+                fileName={`${(client?.name || 'client').replace(/\s+/g, '-').toLowerCase()}-diet-plan-${toISODate(currentWeekStart)}.pdf`}
+                style={{ textDecoration: 'none' }}
+              >
+                {({ loading }) => (
+                  <button
+                    type="button"
+                    className="px-3 py-1 border rounded text-sm hover:bg-gray-100"
+                    style={{
+                      borderColor: 'var(--color-rule)',
+                      color: 'var(--color-ink)',
+                    }}
+                  >
+                    {loading ? t('dietPlan.preparing') : t('dietPlan.downloadPlan')}
+                  </button>
+                )}
+              </PDFDownloadLink>
+            )}
+
+            {savedFlash && <span className="text-green-600 text-sm">{t('dietPlan.saved')}</span>}
           </div>
         </header>
 
@@ -346,11 +394,11 @@ export default function DietPlan() {
           </div>
         )}
 
-        <SummaryCards goal={goal} summary={summary} />
+        <SummaryCards goal={goal} summary={summary} t={t} />
 
         {meals.length === 0 && (
           <div className="mb-3 px-3 py-2 bg-blue-50 border border-blue-200 text-blue-800 rounded text-sm">
-            Click any cell to add a meal
+            {t('dietPlan.noMealsHint')}
           </div>
         )}
 
@@ -360,6 +408,7 @@ export default function DietPlan() {
           dailyTotals={dailyTotals}
           goal={goal}
           onCellClick={handleCellClick}
+          t={t}
         />
 
         {panel && (
@@ -375,12 +424,12 @@ export default function DietPlan() {
         )}
 
         <section className="mt-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Plan notes</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('dietPlan.planNotes')}</label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={4}
-            placeholder={planId ? 'Add notes about this plan…' : 'Add a meal first to start the plan.'}
+            placeholder={planId ? t('dietPlan.planNotesPlaceholder') : t('dietPlan.planNotesEmpty')}
             disabled={!planId}
             className="w-full border rounded p-2 text-sm disabled:bg-gray-100"
           />
@@ -416,36 +465,36 @@ function SummaryCard({ title, value, target, unit, overOk }) {
   );
 }
 
-function SummaryCards({ goal, summary }) {
+function SummaryCards({ goal, summary, t }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
       <SummaryCard
-        title="Avg daily kcal"
+        title={t('dietPlan.summaryCards.avgDailyKcal')}
         value={summary.avgKcal}
         target={goal?.daily_calories}
         unit=""
       />
       <SummaryCard
-        title="Avg protein"
+        title={t('dietPlan.summaryCards.avgProtein')}
         value={summary.avgProtein}
         target={goal?.protein_g}
         unit="g"
         overOk
       />
       <SummaryCard
-        title="Avg carbs"
+        title={t('dietPlan.summaryCards.avgCarbs')}
         value={summary.avgCarbs}
         target={goal?.carbs_g}
         unit="g"
       />
       <SummaryCard
-        title="Avg fat"
+        title={t('dietPlan.summaryCards.avgFat')}
         value={summary.avgFat}
         target={goal?.fat_g}
         unit="g"
       />
       <div className="bg-white border rounded p-3">
-        <div className="text-xs text-gray-500 uppercase tracking-wide">Days filled</div>
+        <div className="text-xs text-gray-500 uppercase tracking-wide">{t('dietPlan.summaryCards.daysFilled')}</div>
         <div className="text-xl font-bold mt-1 tabular-nums">
           {summary.daysFilled}
           <span className="text-gray-400 text-sm font-normal"> / 7</span>
@@ -461,18 +510,18 @@ function SummaryCards({ goal, summary }) {
   );
 }
 
-function PlanGrid({ weekStart, meals, dailyTotals, goal, onCellClick }) {
+function PlanGrid({ weekStart, meals, dailyTotals, goal, onCellClick, t }) {
   return (
     <div className="bg-white border rounded overflow-hidden">
-      <div className="grid grid-cols-[160px_repeat(4,1fr)] text-xs font-semibold text-gray-500 uppercase border-b bg-gray-50">
-        <div className="p-2">Day</div>
-        {MEAL_TYPES.map((t) => (
-          <div key={t} className="p-2 border-l">
-            {MEAL_LABELS[t]}
+      <div className="grid grid-cols-[112px_repeat(4,minmax(0,1fr))] text-xs font-semibold text-gray-500 uppercase border-b bg-gray-50">
+        <div className="p-2">{t('dietPlan.day')}</div>
+        {MEAL_TYPES.map((type) => (
+          <div key={type} className="p-2 border-l">
+            {t(`dietPlan.mealTypes.${type}`)}
           </div>
         ))}
       </div>
-      {DAY_NAMES.map((dayName, idx) => {
+      {DAY_KEYS.map((dayKey, idx) => {
         const date = addDays(weekStart, idx);
         const totals = dailyTotals[idx];
         const kcalColor = !goal
@@ -487,11 +536,11 @@ function PlanGrid({ weekStart, meals, dailyTotals, goal, onCellClick }) {
 
         return (
           <div
-            key={dayName}
-            className="grid grid-cols-[160px_repeat(4,1fr)] border-b last:border-b-0 min-h-[96px]"
+            key={dayKey}
+            className="grid grid-cols-[112px_repeat(4,minmax(0,1fr))] border-b last:border-b-0 min-h-[96px]"
           >
             <div className="p-3 border-r bg-gray-50/60">
-              <div className="text-sm font-semibold">{dayName}</div>
+              <div className="text-sm font-semibold">{t(`dietPlan.days.${dayKey}`)}</div>
               <div className="text-xs text-gray-500">{formatShort(date)}</div>
               <div className={`text-xs mt-2 tabular-nums ${kcalColor}`}>
                 {totals.calories} kcal
@@ -509,6 +558,7 @@ function PlanGrid({ weekStart, meals, dailyTotals, goal, onCellClick }) {
                   mealsInCell={cellMeals}
                   isWeekend={idx >= 5}
                   onCellClick={onCellClick}
+                  t={t}
                 />
               );
             })}
@@ -519,7 +569,7 @@ function PlanGrid({ weekStart, meals, dailyTotals, goal, onCellClick }) {
   );
 }
 
-function Cell({ dayIndex, mealType, mealsInCell, isWeekend, onCellClick }) {
+function Cell({ dayIndex, mealType, mealsInCell, isWeekend, onCellClick, t }) {
   const filled = mealsInCell.length > 0;
   const showAddOnHover = filled || !isWeekend;
 
@@ -532,21 +582,21 @@ function Cell({ dayIndex, mealType, mealsInCell, isWeekend, onCellClick }) {
           showAddOnHover ? 'opacity-60 hover:opacity-100' : ''
         }`}
       >
-        + Add meal
+        {t('dietPlan.addMeal')}
       </button>
     );
   }
 
   return (
-    <div className="border-l p-2 min-h-[96px] flex flex-col gap-1 group relative">
+    <div className="border-l p-2 min-h-[96px] min-w-0 max-w-full overflow-hidden flex flex-col gap-1 group relative">
       {mealsInCell.map((m) => (
         <button
           key={m.id}
           type="button"
           onClick={() => onCellClick(dayIndex, mealType, m)}
-          className="text-left p-1.5 rounded hover:bg-gray-100"
+          className="text-left p-1.5 rounded hover:bg-gray-100 min-w-0 max-w-full overflow-hidden"
         >
-          <div className="text-xs font-semibold truncate">{m.description}</div>
+          <p title={m.description} className="truncate text-xs font-semibold text-gray-900 max-w-full">{m.description}</p>
           <div className="text-[11px] text-gray-500 tabular-nums">
             {Math.round(Number(m.calories) || 0)} kcal
           </div>
@@ -562,7 +612,7 @@ function Cell({ dayIndex, mealType, mealsInCell, isWeekend, onCellClick }) {
         onClick={() => onCellClick(dayIndex, mealType, null)}
         className="text-[11px] text-blue-600 hover:underline opacity-0 group-hover:opacity-100 transition text-left px-1"
       >
-        + Add another
+        {t('dietPlan.addAnother')}
       </button>
     </div>
   );

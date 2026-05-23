@@ -1,0 +1,347 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "newClient": "New Client",
+    "dietPlans": "Diet Plans",
+    "settings": "Settings",
+    "signOut": "Sign out"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "email": "Email",
+    "password": "Password",
+    "invalidCredentials": "Invalid email or password",
+    "subtitle": "Sign in to your account"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "newClient": "New client",
+    "totalClients": "Total clients",
+    "activePlans": "Active plans",
+    "avgGoalProgress": "Avg goal progress",
+    "checkInsThisWeek": "Check-ins this week",
+    "searchPlaceholder": "Search clients…",
+    "noClientsYet": "No clients yet",
+    "noClientsSubtext": "Add your first client to get started",
+    "addClient": "Add client",
+    "noClientsMatch": "No clients match",
+    "loadFailed": "Failed to load clients",
+    "columns": {
+      "client": "Client",
+      "goalProgress": "Goal progress",
+      "lastCheckIn": "Last check-in",
+      "currentWeight": "Current weight",
+      "status": "Status"
+    },
+    "never": "Never",
+    "noGoalSet": "No goal set",
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "new": "New",
+      "paused": "Paused",
+      "overdue": "Overdue"
+    }
+  },
+  "client": {
+    "female": "Female",
+    "male": "Male",
+    "other": "Other",
+    "started": "Started",
+    "editProfile": "Edit profile",
+    "logVisit": "Log visit",
+    "newPlan": "New plan",
+    "overdueBanner": "Last visit was {{days}} days ago — consider scheduling a check-in",
+    "statCards": {
+      "startWeight": "Start weight",
+      "currentWeight": "Current weight",
+      "targetWeight": "Target weight",
+      "goalProgress": "Goal progress"
+    },
+    "weightTrend": "Weight trend",
+    "lastSessions": "Last {{count}} sessions",
+    "notEnoughData": "Not enough data yet — log at least 2 visits to see the chart",
+    "goalBreakdown": "Goal breakdown",
+    "macroTargets": "Macro targets",
+    "noDataYet": "No data yet",
+    "visitLog": "Visit log",
+    "noVisitsYet": "No visits logged yet",
+    "currentDietPlan": "Current diet plan",
+    "weekOf": "Week of",
+    "restDay": "Rest day",
+    "viewFullPlan": "View full plan",
+    "noDietPlanYet": "No diet plan yet",
+    "createFirstPlan": "Create first plan",
+    "kgLost": "{{kg}} kg lost",
+    "kgToGo": "{{kg}} kg to go",
+    "daysLeft": "{{days}} days left",
+    "onTrack": "On track",
+    "behind": "Behind",
+    "noGoalSet": "No goal set",
+    "noGoalSetYet": "No goal set yet",
+    "setGoal": "Set goal",
+    "saveGoal": "Save goal",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "actualWeight": "Actual weight",
+    "target": "Target ({{weight}} kg)",
+    "weightOverTime": "Weight over time",
+    "by": "By {{date}}",
+    "macros": {
+      "protein": "Protein",
+      "carbs": "Carbs",
+      "fat": "Fat",
+      "fiber": "Fiber"
+    },
+    "validation": {
+      "targetWeightPositive": "Target weight must be a positive number",
+      "targetWeightDirection": "Target weight must be less than start weight for a weight loss goal",
+      "targetDateRequired": "Target date is required",
+      "targetDateFuture": "Target date must be a future date",
+      "dailyCaloriesRange": "Daily calories must be 500–5000"
+    }
+  },
+  "weightChart": {
+    "weight": "Weight",
+    "target": "target"
+  },
+  "clientForm": {
+    "newClient": "New client",
+    "editClient": "Edit client",
+    "save": "Save client",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "deleteClient": "Delete client",
+    "deleteConfirm": "This will permanently delete all logs, plans, and data for this client.",
+    "deleteYes": "Yes, delete permanently",
+    "sections": {
+      "personalInfo": "Personal information",
+      "bodyMeasurements": "Body measurements",
+      "goal": "Goal",
+      "dailyMacros": "Daily macro targets",
+      "healthNotes": "Health notes"
+    },
+    "fields": {
+      "name": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "age": "Age",
+      "gender": "Gender",
+      "height": "Height (cm)",
+      "startWeight": "Starting weight (kg)",
+      "status": "Status",
+      "targetWeight": "Target weight (kg)",
+      "targetDate": "Target date",
+      "dailyCalories": "Daily calories (kcal)",
+      "protein": "Protein (g)",
+      "carbs": "Carbs (g)",
+      "fat": "Fat (g)",
+      "fiber": "Fiber (g)",
+      "allergies": "Allergies & intolerances",
+      "medicalNotes": "Medical notes"
+    },
+    "status": {
+      "active": "Active",
+      "new": "New",
+      "paused": "Paused"
+    },
+    "errors": {
+      "nameRequired": "Name is required",
+      "nameTooShort": "Name must be at least 2 characters",
+      "startWeightRequired": "Start weight is required",
+      "startWeightPositive": "Start weight must be a positive number",
+      "ageRange": "Age must be between 1 and 120",
+      "heightRange": "Height must be between 50 and 250 cm",
+      "targetWeightRequired": "Target weight is required",
+      "targetWeightDirection": "Target weight must be less than start weight for a weight loss goal",
+      "targetDateRequired": "Target date is required",
+      "targetDateFuture": "Target date must be a future date"
+    }
+  },
+  "dietPlan": {
+    "title": "Diet plan builder",
+    "subtitleWithGoal": "{{name}} · target {{calories}} kcal/day · {{protein}}g protein",
+    "subtitleNoGoal": "{{name}} · No goal set",
+    "noGoalSet": "No goal set",
+    "copyPrevWeek": "Copy prev week",
+    "copying": "Copying…",
+    "savePlan": "Save plan",
+    "saving": "Saving…",
+    "saved": "Saved ✓",
+    "downloadPlan": "Download plan ↓",
+    "preparing": "Preparing…",
+    "noMealsToExport": "No meals to export",
+    "noMealsHint": "Click any cell to add a meal",
+    "prevWeek": "Previous week",
+    "nextWeek": "Next week",
+    "summaryCards": {
+      "avgDailyKcal": "Avg daily kcal",
+      "avgProtein": "Avg protein",
+      "avgCarbs": "Avg carbs",
+      "avgFat": "Avg fat",
+      "daysFilled": "Days filled"
+    },
+    "mealTypes": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner",
+      "snack": "Snack"
+    },
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    },
+    "day": "Day",
+    "addMeal": "+ Add meal",
+    "addAnother": "+ Add another",
+    "planNotes": "Plan notes",
+    "planNotesPlaceholder": "e.g. avoid dairy on Fridays, increase protein on training days…",
+    "planNotesEmpty": "Add a meal first to start the plan.",
+    "loading": "Loading…",
+    "backToClient": "← Back to client",
+    "dailyTotal": "Daily total",
+    "pdf": {
+      "target": "TARGET",
+      "daily": "DAILY",
+      "protein": "PROTEIN",
+      "carbs": "CARBS",
+      "fat": "FAT",
+      "generatedBy": "Generated by NutriTrack"
+    }
+  },
+  "mealForm": {
+    "newMeal": "New meal",
+    "editMeal": "Edit meal",
+    "description": "Description",
+    "descriptionPlaceholder": "e.g. Grilled chicken salad with olive oil",
+    "calories": "Calories",
+    "protein": "Protein",
+    "carbs": "Carbs",
+    "fat": "Fat",
+    "estimatedFromMacros": "Estimated from macros: {{kcal}} kcal",
+    "recalculate": "Recalculate from macros",
+    "addMeal": "Add meal",
+    "saveChanges": "Save changes",
+    "deleteMeal": "Delete meal",
+    "cancel": "Cancel",
+    "deleteConfirm": "Are you sure?",
+    "deleteYes": "Yes, delete",
+    "errors": {
+      "descriptionRequired": "Description is required",
+      "descriptionTooShort": "Description must be at least 3 characters",
+      "macroWarning": "Heads up — calories don't match the macro total (estimated {{kcal}} kcal)"
+    }
+  },
+  "progressLog": {
+    "title": "Log visit",
+    "subtitle": "{{name}} · last visit {{days}} days ago",
+    "subtitleFirst": "{{name}} · first visit",
+    "firstVisit": "First visit",
+    "saveVisit": "Save visit",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "panels": {
+      "weightMeasurements": "Weight & measurements",
+      "sessionNotes": "Session notes",
+      "goalSnapshot": "Goal snapshot",
+      "previousVisits": "Previous visits"
+    },
+    "previousVisit": "Previous visit",
+    "visitDate": "Visit date",
+    "weight": "Weight (kg)",
+    "measurements": "Measurements (optional)",
+    "waist": "Waist (cm)",
+    "hips": "Hips (cm)",
+    "arms": "Arms (cm)",
+    "howIsClientFeeling": "How is the client feeling?",
+    "planAdjustments": "Plan adjustments this session",
+    "nextAppointment": "Next appointment",
+    "goalRows": {
+      "startWeight": "Start weight",
+      "currentVisit": "Current (this visit)",
+      "target": "Target",
+      "totalLost": "Total lost",
+      "remaining": "Remaining"
+    },
+    "targetDate": "Target date: {{date}} · {{days}} days left",
+    "pastDue": "Past due",
+    "thisIsFirstVisit": "This is the first visit",
+    "noGoalSet": "No goal set",
+    "noPreviousData": "No previous data — this will be the starting measurement",
+    "last": "Last",
+    "start": "Start",
+    "targetShort": "Target",
+    "progress": "Progress",
+    "feelingPlaceholder": "e.g. energy levels up, sleeping better, struggling with weekends...",
+    "adjustmentsPlaceholder": "e.g. increased protein target, added rest-day meal plan...",
+    "backToClient": "← Back to client",
+    "prev": {
+      "weight": "Weight",
+      "waist": "Waist",
+      "hips": "Hips",
+      "arms": "Arms"
+    },
+    "errors": {
+      "weightRequired": "Weight is required",
+      "weightPositive": "Weight must be a positive number",
+      "weightRange": "Weight must be between 20 and 300 kg",
+      "dateFuture": "Visit date cannot be in the future"
+    }
+  },
+  "admin": {
+    "title": "NutriTrack Admin",
+    "secretPlaceholder": "Enter admin secret",
+    "loadAccounts": "Load accounts",
+    "createAccount": "Create account",
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "plan": "Plan",
+      "status": "Status",
+      "clients": "Clients",
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "plans": {
+      "trial": "Trial",
+      "solo": "Solo",
+      "growth": "Growth"
+    },
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended"
+    },
+    "actions": {
+      "suspend": "Suspend",
+      "reactivate": "Reactivate",
+      "delete": "Delete",
+      "sure": "Sure?",
+      "yesDelete": "Yes delete",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "wrongSecret": "Wrong admin secret",
+      "somethingWrong": "Something went wrong"
+    }
+  },
+  "common": {
+    "loading": "Loading…",
+    "saving": "Saving…",
+    "back": "Back",
+    "backToClients": "Back to clients",
+    "backToDashboard": "Back to dashboard",
+    "clientNotFound": "Client not found",
+    "signedInAs": "Signed in as",
+    "kg": "kg",
+    "kcal": "kcal",
+    "g": "g",
+    "cm": "cm",
+    "days": "days"
+  }
+}

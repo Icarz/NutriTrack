@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { logout, getMe } from '../api/auth';
 
 function Logo() {
@@ -35,6 +36,7 @@ function Logo() {
 
 export default function Sidebar() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [me, setMe] = useState(null);
 
   useEffect(() => {
@@ -54,6 +56,8 @@ export default function Sidebar() {
     navigate('/login');
   }
 
+  const currentLang = (i18n.resolvedLanguage || i18n.language || 'en').slice(0, 2);
+
   const navLinkStyle = ({ isActive }) => ({
     display: 'block',
     padding: '10px 14px',
@@ -67,6 +71,19 @@ export default function Sidebar() {
     borderLeft: isActive ? '3px solid var(--color-accent)' : '3px solid transparent',
     paddingLeft: 12,
     transition: 'background .15s, color .15s',
+  });
+
+  const langBtn = (active) => ({
+    flex: 1,
+    padding: '6px 0',
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '0.06em',
+    border: '1px solid var(--color-rule)',
+    background: active ? 'var(--color-accent)' : '#ffffff',
+    color: active ? '#ffffff' : 'var(--color-ink)',
+    cursor: 'pointer',
+    fontFamily: "'Inter', system-ui, sans-serif",
   });
 
   return (
@@ -90,10 +107,10 @@ export default function Sidebar() {
         to="/dashboard"
         end
         style={navLinkStyle}
-        onMouseEnter={(e) => { if (!e.currentTarget.dataset.active) e.currentTarget.style.background = 'var(--color-accent-tint)'; }}
+        onMouseEnter={(e) => { if (e.currentTarget.getAttribute('aria-current') !== 'page') e.currentTarget.style.background = 'var(--color-accent-tint)'; }}
         onMouseLeave={(e) => { e.currentTarget.style.background = e.currentTarget.getAttribute('aria-current') === 'page' ? 'var(--color-accent-tint)' : 'transparent'; }}
       >
-        Dashboard
+        {t('nav.dashboard')}
       </NavLink>
       <NavLink
         to="/clients/new"
@@ -101,7 +118,7 @@ export default function Sidebar() {
         onMouseEnter={(e) => { if (e.currentTarget.getAttribute('aria-current') !== 'page') e.currentTarget.style.background = 'var(--color-accent-tint)'; }}
         onMouseLeave={(e) => { e.currentTarget.style.background = e.currentTarget.getAttribute('aria-current') === 'page' ? 'var(--color-accent-tint)' : 'transparent'; }}
       >
-        New Client
+        {t('nav.newClient')}
       </NavLink>
 
       <button
@@ -123,13 +140,29 @@ export default function Sidebar() {
         onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-accent-tint)'; }}
         onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
       >
-        Logout
+        {t('nav.signOut')}
       </button>
 
       <div style={{ marginTop: 'auto', paddingTop: 16, borderTop: '1px solid var(--color-rule)' }}>
+        <div style={{ display: 'flex', borderRadius: 6, overflow: 'hidden', marginBottom: 10 }}>
+          <button
+            type="button"
+            onClick={() => i18n.changeLanguage('en')}
+            style={langBtn(currentLang === 'en')}
+          >
+            EN
+          </button>
+          <button
+            type="button"
+            onClick={() => i18n.changeLanguage('fr')}
+            style={langBtn(currentLang === 'fr')}
+          >
+            FR
+          </button>
+        </div>
         {me?.name && (
-          <div style={{ padding: '8px 4px', fontSize: 12, color: 'var(--color-stone)' }}>
-            Signed in as{' '}
+          <div style={{ padding: '4px 4px', fontSize: 12, color: 'var(--color-stone)' }}>
+            {t('common.signedInAs')}{' '}
             <span style={{ fontWeight: 600, color: 'var(--color-ink)' }}>{me.name}</span>
           </div>
         )}

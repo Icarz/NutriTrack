@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Sidebar from '../components/Sidebar';
 import WeightChart from '../components/WeightChart';
 import GoalProgressBar from '../components/GoalProgressBar';
@@ -37,6 +38,7 @@ async function safe404(promise) {
 }
 
 export default function ClientDetail() {
+  const { t } = useTranslation();
   const { id: clientId } = useParams();
 
   const [client, setClient] = useState(null);
@@ -94,9 +96,9 @@ export default function ClientDetail() {
       <div className="flex min-h-screen bg-gray-50">
         <Sidebar />
         <main className="flex-1 p-6 flex flex-col items-center justify-center">
-          <p className="text-gray-700 mb-3">Client not found</p>
+          <p className="text-gray-700 mb-3">{t('common.clientNotFound')}</p>
           <Link to="/dashboard" className="text-blue-600 hover:underline">
-            Back to dashboard
+            {t('common.backToDashboard')}
           </Link>
         </main>
       </div>
@@ -138,7 +140,7 @@ export default function ClientDetail() {
                     client.gender,
                     client.age != null ? `${client.age}y` : null,
                     client.height_cm != null ? `${client.height_cm} cm` : null,
-                    client.created_at ? `Started ${fmtDate(client.created_at)}` : null,
+                    client.created_at ? `${t('client.started')} ${fmtDate(client.created_at)}` : null,
                   ]
                     .filter(Boolean)
                     .join(' · ')}
@@ -150,19 +152,19 @@ export default function ClientDetail() {
                 to={`/clients/${clientId}/edit`}
                 className="px-3 py-1.5 text-sm border rounded hover:bg-gray-100"
               >
-                Edit profile
+                {t('client.editProfile')}
               </Link>
               <Link
                 to={`/clients/${clientId}/log`}
                 className="px-3 py-1.5 text-sm border rounded hover:bg-gray-100"
               >
-                Log visit
+                {t('client.logVisit')}
               </Link>
               <Link
                 to={`/clients/${clientId}/plan/new`}
                 className="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700"
               >
-                New plan
+                {t('client.newPlan')}
               </Link>
             </div>
           </div>
@@ -173,30 +175,30 @@ export default function ClientDetail() {
             role="alert"
             className="mb-6 px-4 py-3 bg-amber-50 border border-amber-200 text-amber-800 rounded text-sm"
           >
-            Last visit was {logSummary.days_since_last_log} days ago — consider scheduling a check-in
+            {t('client.overdueBanner', { days: logSummary.days_since_last_log })}
           </div>
         )}
 
         {/* 2. STAT CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <StatBox label="Start weight" value={`${client.start_weight ?? '—'} kg`} />
+          <StatBox label={t('client.statCards.startWeight')} value={`${client.start_weight ?? '—'} kg`} />
           <StatBox
-            label="Current weight"
+            label={t('client.statCards.currentWeight')}
             value={`${latestLog ? currentWeight : (client.start_weight ?? '—')} kg`}
             sub={
               latestLog && lostKg > 0
-                ? `−${lostKg.toFixed(1)} kg lost`
+                ? `−${t('client.kgLost', { kg: lostKg.toFixed(1) })}`
                 : null
             }
             subColor="text-green-700"
           />
           <StatBox
-            label="Target weight"
+            label={t('client.statCards.targetWeight')}
             value={goal?.target_weight != null ? `${goal.target_weight} kg` : '—'}
-            sub={goal?.target_date ? `By ${fmtDate(goal.target_date)}` : null}
+            sub={goal?.target_date ? t('client.by', { date: fmtDate(goal.target_date) }) : null}
           />
           <StatBox
-            label="Goal progress"
+            label={t('client.statCards.goalProgress')}
             value={progressPct != null ? `${Math.round(progressPct)}%` : '0%'}
             valueColor={progressPct != null && progressPct >= 50 ? 'text-green-700' : 'text-amber-700'}
           />
@@ -205,8 +207,8 @@ export default function ClientDetail() {
         {/* 3. WEIGHT CHART */}
         <section className="bg-white border rounded p-5 mb-6">
           <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-            <h2 className="text-lg font-semibold">Weight over time</h2>
-            <span className="text-xs text-gray-500">Last {logs.length} sessions</span>
+            <h2 className="text-lg font-semibold">{t('client.weightOverTime')}</h2>
+            <span className="text-xs text-gray-500">{t('client.lastSessions', { count: logs.length })}</span>
           </div>
           <WeightChart
             logs={[...logs].reverse()}
@@ -218,7 +220,7 @@ export default function ClientDetail() {
         {/* 4. TWO-COLUMN */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <section className="bg-white border rounded p-5">
-            <h2 className="text-lg font-semibold mb-4">Goal breakdown</h2>
+            <h2 className="text-lg font-semibold mb-4">{t('client.goalBreakdown')}</h2>
             {goal ? (
               <>
                 <GoalProgressBar
@@ -230,7 +232,7 @@ export default function ClientDetail() {
                   showDetails={true}
                 />
                 <div className="mt-5 pt-5 border-t">
-                  <h3 className="text-sm font-medium mb-3">Macro targets</h3>
+                  <h3 className="text-sm font-medium mb-3">{t('client.macroTargets')}</h3>
                   <MacroBars activePlan={activePlan} goal={goal} />
                 </div>
               </>
@@ -241,12 +243,12 @@ export default function ClientDetail() {
 
           <section className="bg-white border rounded p-5">
             <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-              <h2 className="text-lg font-semibold">Visit log</h2>
+              <h2 className="text-lg font-semibold">{t('client.visitLog')}</h2>
               <Link
                 to={`/clients/${clientId}/log`}
                 className="px-3 py-1.5 text-sm border rounded hover:bg-gray-100"
               >
-                Log visit
+                {t('client.logVisit')}
               </Link>
             </div>
             <VisitLog logs={logs} />
@@ -256,20 +258,20 @@ export default function ClientDetail() {
         {/* 5. ACTIVE PLAN PREVIEW */}
         <section className="bg-white border rounded p-5">
           <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-            <h2 className="text-lg font-semibold">Current diet plan</h2>
+            <h2 className="text-lg font-semibold">{t('client.currentDietPlan')}</h2>
             {activePlan && (
               <div className="flex gap-2">
                 <Link
                   to={`/clients/${clientId}/plan/${activePlan.id}`}
                   className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
-                  View full plan
+                  {t('client.viewFullPlan')}
                 </Link>
                 <Link
                   to={`/clients/${clientId}/plan/new`}
                   className="px-3 py-1.5 text-sm border rounded hover:bg-gray-100"
                 >
-                  New plan
+                  {t('client.newPlan')}
                 </Link>
               </div>
             )}
@@ -298,16 +300,17 @@ function StatBox({ label, value, sub, subColor, valueColor }) {
 }
 
 const MACROS = [
-  { key: 'protein', label: 'Protein', goalKey: 'protein_g', color: '#7C3AED' },
-  { key: 'carbs', label: 'Carbs', goalKey: 'carbs_g', color: '#1D9E75' },
-  { key: 'fat', label: 'Fat', goalKey: 'fat_g', color: '#BA7517' },
-  { key: 'fiber', label: 'Fiber', goalKey: 'fiber_g', color: '#0F5132' },
+  { key: 'protein', goalKey: 'protein_g', color: '#7C3AED' },
+  { key: 'carbs', goalKey: 'carbs_g', color: '#1D9E75' },
+  { key: 'fat', goalKey: 'fat_g', color: '#BA7517' },
+  { key: 'fiber', goalKey: 'fiber_g', color: '#0F5132' },
 ];
 
 function MacroBars({ activePlan, goal }) {
+  const { t } = useTranslation();
   const averages = activePlan?.weekly_averages || activePlan?.macro_averages || null;
   if (!averages || !goal) {
-    return <div className="text-sm text-gray-400">No data yet</div>;
+    return <div className="text-sm text-gray-400">{t('client.noDataYet')}</div>;
   }
   return (
     <div className="space-y-2">
@@ -320,7 +323,7 @@ function MacroBars({ activePlan, goal }) {
         const fill = over ? '#DC2626' : m.color;
         return (
           <div key={m.key} className="flex items-center gap-2 text-xs">
-            <div className="w-[52px] text-gray-600">{m.label}</div>
+            <div className="w-[52px] text-gray-600">{t(`client.macros.${m.key}`)}</div>
             <div className="flex-1 h-2 bg-gray-200 rounded overflow-hidden">
               <div className="h-full rounded" style={{ width: `${pct}%`, background: fill }} />
             </div>
@@ -335,8 +338,9 @@ function MacroBars({ activePlan, goal }) {
 }
 
 function VisitLog({ logs }) {
+  const { t } = useTranslation();
   if (!logs || logs.length === 0) {
-    return <div className="text-sm text-gray-400 text-center py-8">No visits logged yet</div>;
+    return <div className="text-sm text-gray-400 text-center py-8">{t('client.noVisitsYet')}</div>;
   }
   const items = logs.slice(0, 8);
   return (
@@ -399,10 +403,11 @@ function VisitLog({ logs }) {
 }
 
 function PlanPreview({ plan }) {
+  const { t } = useTranslation();
   return (
     <>
       <p className="text-sm text-gray-500 mb-3">
-        Week of <span className="font-medium">{fmtDate(plan.week_start)}</span>
+        {t('client.weekOf')} <span className="font-medium">{fmtDate(plan.week_start)}</span>
       </p>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {Array.from({ length: PREVIEW_DAYS }, (_, i) => {
@@ -414,7 +419,7 @@ function PlanPreview({ plan }) {
                 {DAY_NAMES[i]}
               </div>
               {dayMeals.length === 0 ? (
-                <div className="text-xs text-gray-400 italic">Rest day</div>
+                <div className="text-xs text-gray-400 italic">{t('client.restDay')}</div>
               ) : (
                 <ul className="space-y-1.5">
                   {dayMeals.map((m) => (
@@ -436,23 +441,25 @@ function PlanPreview({ plan }) {
 }
 
 function EmptyPlanState({ clientId }) {
+  const { t } = useTranslation();
   return (
     <div className="text-center py-12">
       <div className="text-5xl mb-3 opacity-50" aria-hidden="true">
         🥗
       </div>
-      <p className="text-gray-500 mb-4">No diet plan yet</p>
+      <p className="text-gray-500 mb-4">{t('client.noDietPlanYet')}</p>
       <Link
         to={`/clients/${clientId}/plan/new`}
         className="inline-block px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
       >
-        Create first plan
+        {t('client.createFirstPlan')}
       </Link>
     </div>
   );
 }
 
 function InlineGoalForm({ clientId, startWeight, onSaved }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
     target_weight: '',
@@ -469,12 +476,12 @@ function InlineGoalForm({ clientId, startWeight, onSaved }) {
   if (!open) {
     return (
       <div className="text-center py-6">
-        <p className="text-sm text-gray-500 mb-3">No goal set yet</p>
+        <p className="text-sm text-gray-500 mb-3">{t('client.noGoalSetYet')}</p>
         <button
           onClick={() => setOpen(true)}
           className="px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700"
         >
-          Set goal
+          {t('client.setGoal')}
         </button>
       </div>
     );
@@ -490,25 +497,25 @@ function InlineGoalForm({ clientId, startWeight, onSaved }) {
     const tw = parseFloat(form.target_weight);
 
     if (isNaN(tw) || tw <= 0) {
-      setErr('Target weight must be a positive number');
+      setErr(t('client.validation.targetWeightPositive'));
       return false;
     }
     if (!isNaN(sw) && tw >= sw) {
-      setErr('Target weight must be less than start weight for a weight loss goal');
+      setErr(t('client.validation.targetWeightDirection'));
       return false;
     }
     if (!form.target_date) {
-      setErr('Target date is required');
+      setErr(t('client.validation.targetDateRequired'));
       return false;
     }
     if (new Date(form.target_date) <= new Date()) {
-      setErr('Target date must be a future date');
+      setErr(t('client.validation.targetDateFuture'));
       return false;
     }
     if (form.daily_calories !== '' && form.daily_calories != null) {
       const dc = toNum(form.daily_calories);
       if (dc == null || dc < 500 || dc > 5000) {
-        setErr('Daily calories must be 500–5000');
+        setErr(t('client.validation.dailyCaloriesRange'));
         return false;
       }
     }
@@ -544,7 +551,7 @@ function InlineGoalForm({ clientId, startWeight, onSaved }) {
     <form onSubmit={submit} className="space-y-3">
       <div className="grid grid-cols-2 gap-3">
         <label className="text-xs text-gray-600">
-          Target weight (kg) *
+          {t('clientForm.fields.targetWeight')} *
           <input
             type="number"
             step="0.1"
@@ -555,7 +562,7 @@ function InlineGoalForm({ clientId, startWeight, onSaved }) {
           {errors.target_weight && <span className="block text-red-600 mt-0.5">{errors.target_weight}</span>}
         </label>
         <label className="text-xs text-gray-600">
-          Target date *
+          {t('clientForm.fields.targetDate')} *
           <input
             type="date"
             value={form.target_date}
@@ -565,7 +572,7 @@ function InlineGoalForm({ clientId, startWeight, onSaved }) {
           {errors.target_date && <span className="block text-red-600 mt-0.5">{errors.target_date}</span>}
         </label>
         <label className="text-xs text-gray-600">
-          Daily calories
+          {t('clientForm.fields.dailyCalories')}
           <input
             type="number"
             value={form.daily_calories}
@@ -575,7 +582,7 @@ function InlineGoalForm({ clientId, startWeight, onSaved }) {
           {errors.daily_calories && <span className="block text-red-600 mt-0.5">{errors.daily_calories}</span>}
         </label>
         <label className="text-xs text-gray-600">
-          Protein (g)
+          {t('clientForm.fields.protein')}
           <input
             type="number"
             value={form.protein_g}
@@ -584,7 +591,7 @@ function InlineGoalForm({ clientId, startWeight, onSaved }) {
           />
         </label>
         <label className="text-xs text-gray-600">
-          Carbs (g)
+          {t('clientForm.fields.carbs')}
           <input
             type="number"
             value={form.carbs_g}
@@ -593,7 +600,7 @@ function InlineGoalForm({ clientId, startWeight, onSaved }) {
           />
         </label>
         <label className="text-xs text-gray-600">
-          Fat (g)
+          {t('clientForm.fields.fat')}
           <input
             type="number"
             value={form.fat_g}
@@ -609,14 +616,14 @@ function InlineGoalForm({ clientId, startWeight, onSaved }) {
           onClick={() => setOpen(false)}
           className="px-3 py-1.5 text-sm border rounded hover:bg-gray-100"
         >
-          Cancel
+          {t('client.cancel')}
         </button>
         <button
           type="submit"
           disabled={saving}
           className="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
         >
-          {saving ? 'Saving…' : 'Save goal'}
+          {saving ? t('client.saving') : t('client.saveGoal')}
         </button>
       </div>
     </form>

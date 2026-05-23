@@ -34,7 +34,7 @@ async function verifyMeal(mealId, nutritionistId) {
 }
 
 // POST /api/plans/:planId/meals
-router.post('/plans/:planId/meals', async (req, res) => {
+router.post('/plans/:planId/meals', async (req, res, next) => {
   const planId = parseInt(req.params.planId, 10);
   if (!Number.isInteger(planId)) return res.status(404).json({ error: 'Not found' });
 
@@ -79,12 +79,12 @@ router.post('/plans/:planId/meals', async (req, res) => {
     );
     res.status(201).json(rows[0]);
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
 // PUT /api/meals/:mealId
-router.put('/meals/:mealId', async (req, res) => {
+router.put('/meals/:mealId', async (req, res, next) => {
   const mealId = parseInt(req.params.mealId, 10);
   if (!Number.isInteger(mealId)) return res.status(404).json({ error: 'Not found' });
 
@@ -120,12 +120,12 @@ router.put('/meals/:mealId', async (req, res) => {
     );
     res.json(rows[0]);
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
 // DELETE /api/meals/:mealId
-router.delete('/meals/:mealId', async (req, res) => {
+router.delete('/meals/:mealId', async (req, res, next) => {
   const mealId = parseInt(req.params.mealId, 10);
   if (!Number.isInteger(mealId)) return res.status(404).json({ error: 'Not found' });
 
@@ -136,7 +136,7 @@ router.delete('/meals/:mealId', async (req, res) => {
     await pool.query('DELETE FROM meals WHERE id = $1', [mealId]);
     res.json({ success: true });
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 

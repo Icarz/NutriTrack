@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { addMeal, updateMeal, deleteMeal } from '../api/plans';
 
-const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const MEAL_LABELS = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', snack: 'Snack' };
+const DAY_KEYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
 function toNum(v) {
   if (v === '' || v == null) return null;
@@ -23,6 +23,7 @@ export default function MealFormPanel({
   onDelete,
   onClose,
 }) {
+  const { t } = useTranslation();
   const isEdit = !!meal;
   const [description, setDescription] = useState(meal?.description || '');
   const [calories, setCalories] = useState(meal?.calories ?? '');
@@ -78,7 +79,7 @@ export default function MealFormPanel({
   function validate() {
     const errs = {};
     if (!description.trim() || description.trim().length < 3) {
-      errs.description = 'Description must be at least 3 characters';
+      errs.description = t('mealForm.errors.descriptionTooShort');
     }
     const fields = [
       ['calories', toNum(calories), 0, 5000],
@@ -155,9 +156,9 @@ export default function MealFormPanel({
         <header className="flex items-center justify-between px-5 py-4 border-b">
           <div>
             <h2 className="text-lg font-semibold">
-              {DAY_NAMES[dayOfWeek]} · {MEAL_LABELS[mealType]}
+              {t(`dietPlan.days.${DAY_KEYS[dayOfWeek]}`)} · {t(`dietPlan.mealTypes.${mealType}`)}
             </h2>
-            <p className="text-xs text-gray-500">{isEdit ? 'Edit meal' : 'New meal'}</p>
+            <p className="text-xs text-gray-500">{isEdit ? t('mealForm.editMeal') : t('mealForm.newMeal')}</p>
           </div>
           <button
             type="button"
@@ -172,14 +173,14 @@ export default function MealFormPanel({
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">
-              Description <span className="text-red-500">*</span>
+              {t('mealForm.description')} <span className="text-red-500">*</span>
             </label>
             <textarea
               ref={descRef}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              placeholder="e.g. Grilled chicken salad with olive oil"
+              placeholder={t('mealForm.descriptionPlaceholder')}
               className={`w-full border rounded p-2 text-sm ${
                 errors.description ? 'border-red-400' : 'border-gray-300'
               }`}
@@ -190,7 +191,7 @@ export default function MealFormPanel({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Calories</label>
+            <label className="block text-sm font-medium mb-1">{t('mealForm.calories')}</label>
             <div className="flex items-center gap-2">
               <input
                 type="number"
@@ -206,7 +207,7 @@ export default function MealFormPanel({
             </div>
             {!caloriesManual && estimatedKcal > 0 && (
               <p className="text-xs text-gray-500 mt-1">
-                Estimated from macros: {estimatedKcal} kcal
+                {t('mealForm.estimatedFromMacros', { kcal: estimatedKcal })}
               </p>
             )}
             {caloriesManual && (
@@ -218,33 +219,32 @@ export default function MealFormPanel({
                 }}
                 className="text-xs text-blue-600 hover:underline mt-1"
               >
-                Recalculate from macros
+                {t('mealForm.recalculate')}
               </button>
             )}
             {errors.calories && <p className="text-xs text-red-600 mt-1">{errors.calories}</p>}
             {caloriesManual && showMacroWarning && !errors.calories && (
               <p className="text-amber-600 text-xs mt-1">
-                Heads up — calories don't match the macro total
-                (estimated {Math.round(estimatedKcal)} kcal)
+                {t('mealForm.errors.macroWarning', { kcal: Math.round(estimatedKcal) })}
               </p>
             )}
           </div>
 
           <div className="grid grid-cols-3 gap-3">
             <MacroInput
-              label="Protein"
+              label={t('mealForm.protein')}
               value={protein}
               onChange={setProtein}
               error={errors.protein_g}
             />
             <MacroInput
-              label="Carbs"
+              label={t('mealForm.carbs')}
               value={carbs}
               onChange={setCarbs}
               error={errors.carbs_g}
             />
             <MacroInput
-              label="Fat"
+              label={t('mealForm.fat')}
               value={fat}
               onChange={setFat}
               error={errors.fat_g}
@@ -261,14 +261,14 @@ export default function MealFormPanel({
         <footer className="border-t p-4 flex items-center gap-2 flex-wrap">
           {confirmingDelete ? (
             <>
-              <span className="text-sm text-gray-700 mr-auto">Are you sure?</span>
+              <span className="text-sm text-gray-700 mr-auto">{t('mealForm.deleteConfirm')}</span>
               <button
                 type="button"
                 onClick={() => setConfirmingDelete(false)}
                 disabled={deleting}
                 className="px-3 py-1.5 text-sm border rounded hover:bg-gray-100"
               >
-                Cancel
+                {t('mealForm.cancel')}
               </button>
               <button
                 type="button"
@@ -276,7 +276,7 @@ export default function MealFormPanel({
                 disabled={deleting}
                 className="px-3 py-1.5 text-sm bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
               >
-                {deleting ? 'Deleting…' : 'Yes, delete'}
+                {deleting ? t('clientForm.saving') : t('mealForm.deleteYes')}
               </button>
             </>
           ) : (
@@ -287,7 +287,7 @@ export default function MealFormPanel({
                   onClick={() => setConfirmingDelete(true)}
                   className="px-3 py-1.5 text-sm border border-red-300 text-red-600 rounded hover:bg-red-50 mr-auto"
                 >
-                  Delete meal
+                  {t('mealForm.deleteMeal')}
                 </button>
               )}
               <button
@@ -297,7 +297,7 @@ export default function MealFormPanel({
                   isEdit ? '' : 'ml-auto'
                 }`}
               >
-                Cancel
+                {t('mealForm.cancel')}
               </button>
               <button
                 type="button"
@@ -305,7 +305,7 @@ export default function MealFormPanel({
                 disabled={submitting}
                 className="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
               >
-                {submitting ? 'Saving…' : isEdit ? 'Save changes' : 'Add meal'}
+                {submitting ? t('clientForm.saving') : isEdit ? t('mealForm.saveChanges') : t('mealForm.addMeal')}
               </button>
             </>
           )}

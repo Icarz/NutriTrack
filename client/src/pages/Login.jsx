@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { login } from '../api/auth';
 
 function Logo() {
@@ -35,6 +36,7 @@ function Logo() {
 
 export default function Login() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -52,7 +54,7 @@ export default function Login() {
       await login(email, password);
       navigate('/dashboard');
     } catch {
-      setError('Invalid credentials');
+      setError(t('auth.invalidCredentials'));
     } finally {
       setLoading(false);
     }
@@ -86,11 +88,11 @@ export default function Login() {
         </div>
 
         <p style={{ fontSize: 14, color: 'var(--color-stone)', textAlign: 'center', marginBottom: 24 }}>
-          Sign in to your account
+          {t('auth.subtitle')}
         </p>
 
         <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--color-ink)', marginBottom: 6 }}>
-          Email
+          {t('auth.email')}
         </label>
         <input
           type="email"
@@ -111,7 +113,7 @@ export default function Login() {
         />
 
         <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--color-ink)', marginBottom: 6 }}>
-          Password
+          {t('auth.password')}
         </label>
         <input
           type="password"
@@ -151,7 +153,7 @@ export default function Login() {
           onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = 'var(--color-accent-hover)'; }}
           onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--color-accent)'; }}
         >
-          {loading ? 'Signing in…' : 'Sign in'}
+          {loading ? t('auth.signingIn') : t('auth.signIn')}
         </button>
 
         {error && (

@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 const MS_DAY = 1000 * 60 * 60 * 24;
 const GREEN = '#2E8B5F';
 const AMBER = '#BA7517';
@@ -16,16 +18,17 @@ export default function GoalProgressBar({
   createdAt = null,
   showDetails = true,
 }) {
+  const { t } = useTranslation();
   const s = toNum(startWeight);
   const c = toNum(currentWeight);
-  const t = toNum(targetWeight);
+  const tWeight = toNum(targetWeight);
 
-  if (t == null) {
+  if (tWeight == null) {
     return (
       <div>
         <div className="flex justify-between items-center mb-1">
-          <span className="text-[11px] text-gray-500">Goal progress</span>
-          <span className="text-[13px] text-gray-400">No goal set</span>
+          <span className="text-[11px] text-gray-500">{t('client.statCards.goalProgress')}</span>
+          <span className="text-[13px] text-gray-400">{t('client.noGoalSet')}</span>
         </div>
         <div className="w-full h-2 bg-gray-200 rounded" />
       </div>
@@ -33,14 +36,14 @@ export default function GoalProgressBar({
   }
 
   let progressPct = 0;
-  if (s != null && c != null && s !== t) {
-    progressPct = ((s - c) / (s - t)) * 100;
+  if (s != null && c != null && s !== tWeight) {
+    progressPct = ((s - c) / (s - tWeight)) * 100;
     if (progressPct < 0) progressPct = 0;
     if (progressPct > 100) progressPct = 100;
   }
 
   const kgLost = s != null && c != null ? s - c : 0;
-  const kgRemaining = c != null ? c - t : 0;
+  const kgRemaining = c != null ? c - tWeight : 0;
 
   let daysRemaining = null;
   let onTrack = null;
@@ -64,7 +67,7 @@ export default function GoalProgressBar({
   return (
     <div>
       <div className="flex justify-between items-center mb-1">
-        <span className="text-[11px] text-gray-500">Goal progress</span>
+        <span className="text-[11px] text-gray-500">{t('client.statCards.goalProgress')}</span>
         <span className="text-[13px] font-medium text-gray-800">
           {progressPct.toFixed(0)}%
         </span>
@@ -77,15 +80,15 @@ export default function GoalProgressBar({
       </div>
       <div className="flex justify-between mt-1">
         <span className="text-[10px] text-gray-500">{s ?? '—'} kg</span>
-        <span className="text-[10px] text-gray-500">{t} kg</span>
+        <span className="text-[10px] text-gray-500">{tWeight} kg</span>
       </div>
 
       {showDetails && (
         <div className="flex items-center justify-between mt-2 gap-2 flex-wrap">
           <div className="text-xs text-gray-600">
-            {kgLost.toFixed(1)} kg lost · {kgRemaining.toFixed(1)} kg to go
+            {t('client.kgLost', { kg: kgLost.toFixed(1) })} · {t('client.kgToGo', { kg: kgRemaining.toFixed(1) })}
             {daysRemaining != null && (
-              <> · {Math.max(0, Math.round(daysRemaining))} days left</>
+              <> · {t('client.daysLeft', { days: Math.max(0, Math.round(daysRemaining)) })}</>
             )}
           </div>
           {onTrack != null && (
@@ -96,7 +99,7 @@ export default function GoalProgressBar({
                   : 'inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-amber-100 text-amber-800'
               }
             >
-              {onTrack ? 'On track' : 'Behind'}
+              {onTrack ? t('client.onTrack') : t('client.behind')}
             </span>
           )}
         </div>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Sidebar from '../components/Sidebar';
 import ClientForm, { validateClient } from '../components/ClientForm';
 import { getClient, updateClient, deleteClient } from '../api/clients';
@@ -16,6 +17,7 @@ export default function ClientEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { t } = useTranslation();
 
   const [client, setClient] = useState(null);
   const [goal, setGoal] = useState(null);
@@ -74,7 +76,7 @@ export default function ClientEdit() {
 
   async function handleClientSubmit(payload) {
     await updateClient(id, payload);
-    showToast('Client updated', 'success');
+    showToast(t('clientForm.editClient'), 'success');
     navigate(`/clients/${id}`);
   }
 
@@ -84,19 +86,19 @@ export default function ClientEdit() {
     const sw = parseFloat(client?.start_weight);
     if (goalForm.target_weight === '') return true; // optional if nothing entered
     if (isNaN(tw) || tw <= 0) {
-      setGoalErr('Target weight must be a positive number');
+      setGoalErr(t('clientForm.errors.targetWeightRequired'));
       return false;
     }
     if (!isNaN(sw) && tw >= sw) {
-      setGoalErr('Target weight must be less than start weight for a weight loss goal');
+      setGoalErr(t('clientForm.errors.targetWeightDirection'));
       return false;
     }
     if (!goalForm.target_date) {
-      setGoalErr('Target date is required');
+      setGoalErr(t('clientForm.errors.targetDateRequired'));
       return false;
     }
     if (new Date(goalForm.target_date) <= new Date()) {
-      setGoalErr('Target date must be a future date');
+      setGoalErr(t('clientForm.errors.targetDateFuture'));
       return false;
     }
     if (goalForm.daily_calories !== '') {
@@ -152,11 +154,11 @@ export default function ClientEdit() {
       <Sidebar />
       <main className="flex-1 p-6 max-w-[1100px]">
         <Link to={`/clients/${id}`} className="text-sm text-blue-600 hover:underline">
-          ← Back to client
+          ← {t('common.backToClients')}
         </Link>
-        <h1 className="text-2xl font-bold mt-2 mb-6">Edit Client</h1>
+        <h1 className="text-2xl font-bold mt-2 mb-6">{t('clientForm.editClient')}</h1>
 
-        {loading && <p className="text-sm text-gray-500">Loading…</p>}
+        {loading && <p className="text-sm text-gray-500">{t('common.loading')}</p>}
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded text-sm mb-4">
             {error}
@@ -167,43 +169,43 @@ export default function ClientEdit() {
           <>
             <section className="bg-white border rounded p-6 mb-6">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 mb-4">
-                Client info
+                {t('clientForm.sections.personalInfo')}
               </h2>
               <ClientForm
                 initial={client}
-                submitLabel="Save changes"
+                submitLabel={t('clientForm.save')}
                 onSubmit={handleClientSubmit}
               />
             </section>
 
             <section className="bg-white border rounded p-6 mb-6">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 mb-4">
-                Goal {goal ? '' : '(none set)'}
+                {t('clientForm.sections.goal')}
               </h2>
               <form onSubmit={handleGoalSave} className="space-y-4 max-w-2xl">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <label className="block text-sm">
-                    <span className="block font-medium mb-1">Target weight (kg)</span>
+                    <span className="block font-medium mb-1">{t('clientForm.fields.targetWeight')}</span>
                     <input type="number" step="0.1" className={input} value={goalForm.target_weight} onChange={upd('target_weight')} />
                   </label>
                   <label className="block text-sm">
-                    <span className="block font-medium mb-1">Target date</span>
+                    <span className="block font-medium mb-1">{t('clientForm.fields.targetDate')}</span>
                     <input type="date" className={input} value={goalForm.target_date} onChange={upd('target_date')} />
                   </label>
                   <label className="block text-sm">
-                    <span className="block font-medium mb-1">Daily calories</span>
+                    <span className="block font-medium mb-1">{t('clientForm.fields.dailyCalories')}</span>
                     <input type="number" className={input} value={goalForm.daily_calories} onChange={upd('daily_calories')} />
                   </label>
                   <label className="block text-sm">
-                    <span className="block font-medium mb-1">Protein (g)</span>
+                    <span className="block font-medium mb-1">{t('clientForm.fields.protein')}</span>
                     <input type="number" className={input} value={goalForm.protein_g} onChange={upd('protein_g')} />
                   </label>
                   <label className="block text-sm">
-                    <span className="block font-medium mb-1">Carbs (g)</span>
+                    <span className="block font-medium mb-1">{t('clientForm.fields.carbs')}</span>
                     <input type="number" className={input} value={goalForm.carbs_g} onChange={upd('carbs_g')} />
                   </label>
                   <label className="block text-sm">
-                    <span className="block font-medium mb-1">Fat (g)</span>
+                    <span className="block font-medium mb-1">{t('clientForm.fields.fat')}</span>
                     <input type="number" className={input} value={goalForm.fat_g} onChange={upd('fat_g')} />
                   </label>
                 </div>
@@ -217,19 +219,19 @@ export default function ClientEdit() {
                   disabled={savingGoal}
                   className="px-4 py-2 bg-green-600 text-white text-sm rounded hover:bg-green-700 disabled:opacity-50"
                 >
-                  {savingGoal ? 'Saving…' : 'Save goal'}
+                  {savingGoal ? t('clientForm.saving') : t('clientForm.save')}
                 </button>
               </form>
             </section>
 
             <section className="bg-white border border-red-200 rounded p-6">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-red-600 mb-3">
-                Danger zone
+                {t('clientForm.deleteClient')}
               </h2>
               {confirmingDelete ? (
                 <div>
                   <p className="text-sm text-gray-700 mb-3">
-                    This will permanently delete all logs, plans, and data for this client.
+                    {t('clientForm.deleteConfirm')}
                   </p>
                   <div className="flex gap-2">
                     <button
@@ -238,7 +240,7 @@ export default function ClientEdit() {
                       disabled={deleting}
                       className="px-4 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700 disabled:opacity-50"
                     >
-                      {deleting ? 'Deleting…' : 'Yes, delete permanently'}
+                      {deleting ? t('clientForm.saving') : t('clientForm.deleteYes')}
                     </button>
                     <button
                       type="button"
@@ -246,7 +248,7 @@ export default function ClientEdit() {
                       disabled={deleting}
                       className="px-4 py-2 border rounded text-sm hover:bg-gray-100"
                     >
-                      Cancel
+                      {t('clientForm.cancel')}
                     </button>
                   </div>
                 </div>
@@ -256,7 +258,7 @@ export default function ClientEdit() {
                   onClick={() => setConfirmingDelete(true)}
                   className="px-4 py-2 border border-red-300 text-red-600 text-sm rounded hover:bg-red-50"
                 >
-                  Delete client
+                  {t('clientForm.deleteClient')}
                 </button>
               )}
             </section>

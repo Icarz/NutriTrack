@@ -15,7 +15,7 @@ const loginLimiter = rateLimit({
   message: { error: 'Too many login attempts, try again later' },
 });
 
-router.post('/login', loginLimiter, async (req, res) => {
+router.post('/login', loginLimiter, async (req, res, next) => {
   const { email, password } = req.body || {};
   if (!email || !password) return res.status(400).json({ error: 'email and password required' });
   try {
@@ -32,7 +32,7 @@ router.post('/login', loginLimiter, async (req, res) => {
     const { password_hash, ...safe } = n;
     res.json({ token, nutritionist: safe });
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 

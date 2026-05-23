@@ -1,18 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Sidebar from '../components/Sidebar';
 import StatCard from '../components/StatCard';
 import ClientRow from '../components/ClientRow';
 import { SkeletonStatCards, SkeletonClientRow } from '../components/Skeleton';
 import { getClients } from '../api/clients';
 
-const FILTERS = [
-  { key: 'all', label: 'All' },
-  { key: 'active', label: 'Active' },
-  { key: 'new', label: 'New' },
-  { key: 'paused', label: 'Paused' },
-  { key: 'overdue', label: 'Overdue' },
-];
+const FILTER_KEYS = ['all', 'active', 'new', 'paused', 'overdue'];
 
 const SORT_DEFAULT = 'default';
 const SORT_NAME_ASC = 'name_asc';
@@ -30,6 +25,7 @@ function compareDefault(a, b) {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -52,7 +48,7 @@ export default function Dashboard() {
           navigate('/login');
           return;
         }
-        setError(e?.response?.data?.error || 'Failed to load clients');
+        setError(e?.response?.data?.error || t('dashboard.loadFailed'));
       } finally {
         setLoading(false);
       }
@@ -121,12 +117,12 @@ export default function Dashboard() {
       <Sidebar />
       <main className="flex-1 p-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <h1 className="text-2xl font-bold">{t('dashboard.title')}</h1>
           <button
             onClick={() => navigate('/clients/new')}
             className="bg-gray-900 text-white rounded px-4 py-2 hover:bg-gray-800"
           >
-            New client
+            {t('dashboard.newClient')}
           </button>
         </div>
 
@@ -134,10 +130,10 @@ export default function Dashboard() {
           <SkeletonStatCards />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <StatCard label="Total clients" value={stats.total} />
-            <StatCard label="Active plans" value={stats.activePlans} />
-            <StatCard label="Avg goal progress" value={`${stats.avgProgress}%`} />
-            <StatCard label="Check-ins this week" value={stats.checkInsThisWeek} />
+            <StatCard label={t('dashboard.totalClients')} value={stats.total} />
+            <StatCard label={t('dashboard.activePlans')} value={stats.activePlans} />
+            <StatCard label={t('dashboard.avgGoalProgress')} value={`${stats.avgProgress}%`} />
+            <StatCard label={t('dashboard.checkInsThisWeek')} value={stats.checkInsThisWeek} />
           </div>
         )}
 
@@ -149,17 +145,17 @@ export default function Dashboard() {
 
         <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
           <div className="flex items-center gap-2 flex-wrap">
-            {FILTERS.map((f) => (
+            {FILTER_KEYS.map((key) => (
               <button
-                key={f.key}
-                onClick={() => setFilter(f.key)}
+                key={key}
+                onClick={() => setFilter(key)}
                 className={
-                  filter === f.key
+                  filter === key
                     ? 'px-3 py-1 text-sm rounded-full bg-gray-900 text-white'
                     : 'px-3 py-1 text-sm rounded-full bg-white border border-gray-200 text-gray-700 hover:bg-gray-100'
                 }
               >
-                {f.label}
+                {t(`dashboard.filters.${key}`)}
               </button>
             ))}
           </div>
@@ -167,7 +163,7 @@ export default function Dashboard() {
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search clients…"
+            placeholder={t('dashboard.searchPlaceholder')}
             className="px-3 py-1.5 text-sm border border-gray-200 rounded w-64 max-w-full"
           />
         </div>
@@ -175,15 +171,15 @@ export default function Dashboard() {
         {!loading && clients.length === 0 ? (
           <div className="bg-white border border-gray-200 rounded p-12 text-center">
             <div className="text-5xl mb-3 opacity-60" aria-hidden="true">👥</div>
-            <h2 className="text-lg font-semibold text-gray-800">No clients yet</h2>
+            <h2 className="text-lg font-semibold text-gray-800">{t('dashboard.noClientsYet')}</h2>
             <p className="text-sm text-gray-500 mt-1 mb-4">
-              Add your first client to get started
+              {t('dashboard.noClientsSubtext')}
             </p>
             <button
               onClick={() => navigate('/clients/new')}
               className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
             >
-              Add client
+              {t('dashboard.addClient')}
             </button>
           </div>
         ) : (
@@ -195,17 +191,17 @@ export default function Dashboard() {
                     className="px-4 py-2 cursor-pointer select-none"
                     onClick={cycleClientSort}
                   >
-                    Client{sortIndicator('name')}
+                    {t('dashboard.columns.client')}{sortIndicator('name')}
                   </th>
-                  <th className="px-4 py-2">Goal progress</th>
+                  <th className="px-4 py-2">{t('dashboard.columns.goalProgress')}</th>
                   <th
                     className="px-4 py-2 cursor-pointer select-none"
                     onClick={setLastLogSort}
                   >
-                    Last check-in{sortIndicator('last_log')}
+                    {t('dashboard.columns.lastCheckIn')}{sortIndicator('last_log')}
                   </th>
-                  <th className="px-4 py-2">Current weight</th>
-                  <th className="px-4 py-2">Status</th>
+                  <th className="px-4 py-2">{t('dashboard.columns.currentWeight')}</th>
+                  <th className="px-4 py-2">{t('dashboard.columns.status')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -214,7 +210,7 @@ export default function Dashboard() {
                 {!loading && visibleClients.length === 0 && (
                   <tr>
                     <td colSpan={5} className="px-4 py-6 text-center text-gray-500">
-                      No clients match
+                      {t('dashboard.noClientsMatch')}
                     </td>
                   </tr>
                 )}

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   ResponsiveContainer,
   LineChart,
@@ -39,10 +40,11 @@ function CustomDot(props) {
 }
 
 export default function WeightChart({ logs, targetWeight, startWeight }) {
+  const { t } = useTranslation();
   if (!logs || logs.length < 2) {
     return (
       <div className="flex items-center justify-center h-[160px] text-sm text-gray-400">
-        Not enough data yet — log at least 2 visits to see the chart
+        {t('client.notEnoughData')}
       </div>
     );
   }
@@ -82,7 +84,7 @@ export default function WeightChart({ logs, targetWeight, startWeight }) {
               fontSize: 12,
               boxShadow: 'none',
             }}
-            formatter={(value) => [`${value} kg`, 'Weight']}
+            formatter={(value) => [`${value} kg`, t('weightChart.weight')]}
             labelFormatter={formatTooltipLabel}
           />
           {targetWeight != null && (
@@ -92,7 +94,7 @@ export default function WeightChart({ logs, targetWeight, startWeight }) {
               strokeDasharray="4 3"
               strokeOpacity={0.5}
               label={{
-                value: 'target',
+                value: t('weightChart.target'),
                 position: 'right',
                 fontSize: 9,
                 fill: RED,
@@ -118,7 +120,7 @@ export default function WeightChart({ logs, targetWeight, startWeight }) {
             aria-hidden="true"
             style={{ display: 'inline-block', width: 14, height: 2, background: GREEN }}
           />
-          <span>Actual weight</span>
+          <span>{t('client.actualWeight')}</span>
         </div>
         {targetWeight != null && (
           <div className="flex items-center gap-1.5">
@@ -131,7 +133,7 @@ export default function WeightChart({ logs, targetWeight, startWeight }) {
                 borderTop: `2px dashed ${RED}`,
               }}
             />
-            <span>Target ({targetWeight} kg)</span>
+            <span>{t('client.target', { weight: targetWeight })}</span>
           </div>
         )}
       </div>

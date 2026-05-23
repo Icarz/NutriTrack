@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Sidebar from '../components/Sidebar';
 import { getClient } from '../api/clients';
 import { getGoal } from '../api/plans';
@@ -36,6 +37,7 @@ function round1(n) {
 }
 
 export default function ProgressLog() {
+  const { t } = useTranslation();
   const { id: clientId } = useParams();
   const navigate = useNavigate();
 
@@ -139,8 +141,8 @@ export default function ProgressLog() {
     const elapsed = daysBetween(client.created_at, todayIso());
     if (totalDays <= 0) return null;
     const expected = (elapsed / totalDays) * 100;
-    if (progressPct >= expected * 0.9) return { label: 'On track', tone: 'green' };
-    return { label: 'Behind', tone: 'amber' };
+    if (progressPct >= expected * 0.9) return { tone: 'green' };
+    return { tone: 'amber' };
   }, [goal, client, progressPct, weightNum]);
 
   const daysToTarget = goal?.target_date ? daysBetween(todayIso(), goal.target_date) : null;
@@ -149,11 +151,11 @@ export default function ProgressLog() {
     const e = {};
     const w = toNum(weight);
     if (w == null || w <= 0) {
-      e.weight = 'Weight is required and must be a positive number';
+      e.weight = t('progressLog.errors.weightPositive');
     } else if (w < 20 || w > 300) {
-      e.weight = 'Weight must be between 20 and 300 kg';
+      e.weight = t('progressLog.errors.weightRange');
     }
-    if (!logDate || logDate > todayIso()) e.logDate = 'Visit date cannot be in the future';
+    if (!logDate || logDate > todayIso()) e.logDate = t('progressLog.errors.dateFuture');
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -185,26 +187,26 @@ export default function ProgressLog() {
     return (
       <div className="flex min-h-screen">
         <Sidebar />
-        <main className="flex-1 p-6">Loading…</main>
+        <main className="flex-1 p-6">{t('common.loading')}</main>
       </div>
     );
   }
 
   const subtitle = prev
-    ? `${client?.name || 'Client'} · last visit ${lastVisitDays} day${lastVisitDays === 1 ? '' : 's'} ago`
-    : `${client?.name || 'Client'} · First visit`;
+    ? t('progressLog.subtitle', { name: client?.name || 'Client', days: lastVisitDays })
+    : t('progressLog.subtitleFirst', { name: client?.name || 'Client' });
 
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
       <main className="flex-1 p-6 max-w-[1400px]">
         <Link to={`/clients/${clientId}`} className="text-sm text-blue-600 hover:underline">
-          ← Back to client
+          {t('progressLog.backToClient')}
         </Link>
 
         <header className="mt-2 mb-6 flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-2xl font-bold">Log visit</h1>
+            <h1 className="text-2xl font-bold">{t('progressLog.title')}</h1>
             <p className="text-sm text-gray-600 mt-1">{subtitle}</p>
           </div>
           <div className="flex items-center gap-2">
@@ -212,7 +214,7 @@ export default function ProgressLog() {
               to={`/clients/${clientId}`}
               className="px-3 py-1.5 text-sm border rounded hover:bg-gray-100"
             >
-              Cancel
+              {t('progressLog.cancel')}
             </Link>
             <button
               type="button"
@@ -221,7 +223,7 @@ export default function ProgressLog() {
               className="px-4 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 inline-flex items-center gap-2"
             >
               {saving && <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
-              {saving ? 'Saving…' : 'Save visit'}
+              {saving ? t('progressLog.saving') : t('progressLog.saveVisit')}
             </button>
           </div>
         </header>
@@ -234,19 +236,19 @@ export default function ProgressLog() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <Panel title="Weight & measurements">
+            <Panel title={t('progressLog.panels.weightMeasurements')}>
               {prev && (
                 <div className="mb-4 px-3 py-2 bg-gray-100 rounded text-xs text-gray-600 flex flex-wrap gap-x-4 gap-y-1">
-                  <span className="font-medium text-gray-700">Previous visit</span>
+                  <span className="font-medium text-gray-700">{t('progressLog.previousVisit')}</span>
                   <span>{formatLongDate(prev.log_date)}</span>
-                  <span className="tabular-nums">Weight: {prev.weight} kg</span>
-                  {prev.waist_cm != null && <span>Waist: {prev.waist_cm} cm</span>}
-                  {prev.hips_cm != null && <span>Hips: {prev.hips_cm} cm</span>}
-                  {prev.arms_cm != null && <span>Arms: {prev.arms_cm} cm</span>}
+                  <span className="tabular-nums">{t('progressLog.prev.weight')}: {prev.weight} kg</span>
+                  {prev.waist_cm != null && <span>{t('progressLog.prev.waist')}: {prev.waist_cm} cm</span>}
+                  {prev.hips_cm != null && <span>{t('progressLog.prev.hips')}: {prev.hips_cm} cm</span>}
+                  {prev.arms_cm != null && <span>{t('progressLog.prev.arms')}: {prev.arms_cm} cm</span>}
                 </div>
               )}
 
-              <Field label="Visit date" error={errors.logDate}>
+              <Field label={t('progressLog.visitDate')} error={errors.logDate}>
                 <input
                   type="date"
                   value={logDate}
@@ -259,18 +261,18 @@ export default function ProgressLog() {
               <Field
                 label={
                   <span className="flex items-center gap-2">
-                    Weight (kg) <span className="text-red-500">*</span>
+                    {t('progressLog.weight')} <span className="text-red-500">*</span>
                     {liveDelta != null && weight !== '' && <DeltaBadge delta={liveDelta} />}
                   </span>
                 }
                 error={errors.weight}
                 hint={
                   logs.length === 0 ? (
-                    <span>No previous data — this will be the starting measurement</span>
+                    <span>{t('progressLog.noPreviousData')}</span>
                   ) : (
                     <span>
-                      Last: <b>{prev?.weight ?? '—'}</b> kg · Start:{' '}
-                      <b>{client?.start_weight ?? '—'}</b> kg · Target:{' '}
+                      {t('progressLog.last')}: <b>{prev?.weight ?? '—'}</b> kg · {t('progressLog.start')}:{' '}
+                      <b>{client?.start_weight ?? '—'}</b> kg · {t('progressLog.targetShort')}:{' '}
                       <b>{goal?.target_weight ?? '—'}</b> kg
                     </span>
                   )
@@ -290,36 +292,36 @@ export default function ProgressLog() {
 
               <div className="mt-4">
                 <p className="text-sm font-medium mb-2">
-                  Measurements <span className="text-gray-400 text-xs">(optional)</span>
+                  {t('progressLog.measurements')}
                 </p>
                 <div className="grid grid-cols-3 gap-3">
-                  <NumField label="Waist (cm)" value={waistCm} onChange={setWaistCm} />
-                  <NumField label="Hips (cm)" value={hipsCm} onChange={setHipsCm} />
-                  <NumField label="Arms (cm)" value={armsCm} onChange={setArmsCm} />
+                  <NumField label={t('progressLog.waist')} value={waistCm} onChange={setWaistCm} />
+                  <NumField label={t('progressLog.hips')} value={hipsCm} onChange={setHipsCm} />
+                  <NumField label={t('progressLog.arms')} value={armsCm} onChange={setArmsCm} />
                 </div>
               </div>
             </Panel>
 
-            <Panel title="Session notes">
-              <Field label="How is the client feeling?">
+            <Panel title={t('progressLog.panels.sessionNotes')}>
+              <Field label={t('progressLog.howIsClientFeeling')}>
                 <textarea
                   value={sessionNotes}
                   onChange={(e) => setSessionNotes(e.target.value)}
                   rows={3}
-                  placeholder="e.g. energy levels up, sleeping better, struggling with weekends..."
+                  placeholder={t('progressLog.feelingPlaceholder')}
                   className="w-full border rounded p-2 text-sm"
                 />
               </Field>
-              <Field label="Plan adjustments this session">
+              <Field label={t('progressLog.planAdjustments')}>
                 <textarea
                   value={planAdjustments}
                   onChange={(e) => setPlanAdjustments(e.target.value)}
                   rows={3}
-                  placeholder="e.g. increased protein target, added rest-day meal plan..."
+                  placeholder={t('progressLog.adjustmentsPlaceholder')}
                   className="w-full border rounded p-2 text-sm"
                 />
               </Field>
-              <Field label="Next appointment">
+              <Field label={t('progressLog.nextAppointment')}>
                 <input
                   type="date"
                   value={nextAppointment}
@@ -337,25 +339,25 @@ export default function ProgressLog() {
           </div>
 
           <div className="space-y-6">
-            <Panel title="Goal snapshot">
-              <KV label="Start weight" value={startWeight != null ? `${startWeight} kg` : '—'} />
+            <Panel title={t('progressLog.panels.goalSnapshot')}>
+              <KV label={t('progressLog.goalRows.startWeight')} value={startWeight != null ? `${startWeight} kg` : '—'} />
               <KV
-                label="Current (this visit)"
+                label={t('progressLog.goalRows.currentVisit')}
                 value={liveCurrent != null ? `${liveCurrent} kg` : '—'}
                 highlight
               />
               <KV
-                label="Target"
-                value={targetWeight != null ? `${targetWeight} kg` : 'No goal set'}
+                label={t('progressLog.goalRows.target')}
+                value={targetWeight != null ? `${targetWeight} kg` : t('progressLog.noGoalSet')}
                 muted={targetWeight == null}
               />
-              <KV label="Total lost" value={totalLost != null ? `${totalLost} kg` : '—'} />
-              <KV label="Remaining" value={remaining != null ? `${remaining} kg` : '—'} />
+              <KV label={t('progressLog.goalRows.totalLost')} value={totalLost != null ? `${totalLost} kg` : '—'} />
+              <KV label={t('progressLog.goalRows.remaining')} value={remaining != null ? `${remaining} kg` : '—'} />
 
               {progressPct != null && (
                 <div className="mt-3">
                   <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-                    <span>Progress</span>
+                    <span>{t('progressLog.progress')}</span>
                     <span className="tabular-nums">{progressPct}%</span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded overflow-hidden">
@@ -369,7 +371,7 @@ export default function ProgressLog() {
 
               {logs.length === 0 ? (
                 <div className="mt-3 inline-block px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
-                  This is the first visit
+                  {t('progressLog.thisIsFirstVisit')}
                 </div>
               ) : (
                 pace && (
@@ -380,23 +382,23 @@ export default function ProgressLog() {
                         : 'bg-amber-100 text-amber-700'
                     }`}
                   >
-                    {pace.label}
+                    {pace.tone === 'green' ? t('client.onTrack') : t('client.behind')}
                   </div>
                 )
               )}
 
               {goal?.target_date && (
                 <div className="mt-3 text-xs text-gray-500">
-                  Target date: <b>{formatLongDate(goal.target_date)}</b>
+                  {t('progressLog.goalRows.target')}: <b>{formatLongDate(goal.target_date)}</b>
                   {daysToTarget != null && (
-                    <span> · {daysToTarget > 0 ? `${daysToTarget} days left` : 'Past due'}</span>
+                    <span> · {daysToTarget > 0 ? t('client.daysLeft', { days: daysToTarget }) : t('progressLog.pastDue')}</span>
                   )}
                 </div>
               )}
             </Panel>
 
             {logs.length > 0 && (
-              <Panel title="Previous visits">
+              <Panel title={t('progressLog.panels.previousVisits')}>
                 <ul className="space-y-3">
                   {logs.slice(0, 6).map((l, idx) => (
                     <li key={l.id} className="flex gap-3 text-xs">
@@ -417,9 +419,9 @@ export default function ProgressLog() {
                         )}
                         {(l.waist_cm != null || l.hips_cm != null) && (
                           <div className="text-gray-500 mt-0.5">
-                            {l.waist_cm != null && `Waist ${l.waist_cm} cm`}
+                            {l.waist_cm != null && `${t('progressLog.prev.waist')} ${l.waist_cm} cm`}
                             {l.waist_cm != null && l.hips_cm != null && ' · '}
-                            {l.hips_cm != null && `Hips ${l.hips_cm} cm`}
+                            {l.hips_cm != null && `${t('progressLog.prev.hips')} ${l.hips_cm} cm`}
                           </div>
                         )}
                         {l.session_notes && (

@@ -59,7 +59,7 @@ function computeProgressPct(startWeight, currentWeight, targetWeight) {
   return Math.round(pct * 10) / 10;
 }
 
-router.get('/:id/goals', async (req, res) => {
+router.get('/:id/goals', async (req, res, next) => {
   const clientId = parseInt(req.params.id, 10);
   if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
   try {
@@ -82,11 +82,11 @@ router.get('/:id/goals', async (req, res) => {
 
     res.json({ ...goal, current_weight: currentWeight, progress_pct });
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
-router.post('/:id/goals', async (req, res) => {
+router.post('/:id/goals', async (req, res, next) => {
   const clientId = parseInt(req.params.id, 10);
   if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
@@ -117,11 +117,11 @@ router.post('/:id/goals', async (req, res) => {
     );
     res.status(201).json(rows[0]);
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
-router.put('/:id/goals', async (req, res) => {
+router.put('/:id/goals', async (req, res, next) => {
   const clientId = parseInt(req.params.id, 10);
   if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
@@ -193,7 +193,7 @@ router.put('/:id/goals', async (req, res) => {
 
     res.json({ ...goal, current_weight: currentWeight, progress_pct });
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 

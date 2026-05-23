@@ -144,7 +144,7 @@ async function fetchLogsAndSummary(clientId, client) {
 }
 
 // GET /api/clients/:id/logs
-router.get('/clients/:id/logs', async (req, res) => {
+router.get('/clients/:id/logs', async (req, res, next) => {
   const clientId = parseInt(req.params.id, 10);
   if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
   try {
@@ -153,12 +153,12 @@ router.get('/clients/:id/logs', async (req, res) => {
     const payload = await fetchLogsAndSummary(clientId, client);
     res.json(payload);
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
 // POST /api/clients/:id/logs
-router.post('/clients/:id/logs', async (req, res) => {
+router.post('/clients/:id/logs', async (req, res, next) => {
   const clientId = parseInt(req.params.id, 10);
   if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
@@ -226,12 +226,12 @@ router.post('/clients/:id/logs', async (req, res) => {
 
     res.status(201).json({ ...created, weight_delta });
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
 // PUT /api/logs/:logId
-router.put('/logs/:logId', async (req, res) => {
+router.put('/logs/:logId', async (req, res, next) => {
   const logId = parseInt(req.params.logId, 10);
   if (!Number.isInteger(logId)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
@@ -290,12 +290,12 @@ router.put('/logs/:logId', async (req, res) => {
     );
     res.json(rows[0]);
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
 // DELETE /api/logs/:logId
-router.delete('/logs/:logId', async (req, res) => {
+router.delete('/logs/:logId', async (req, res, next) => {
   const logId = parseInt(req.params.logId, 10);
   if (!Number.isInteger(logId)) return res.status(404).json({ error: 'Not found' });
   try {
@@ -304,7 +304,7 @@ router.delete('/logs/:logId', async (req, res) => {
     await pool.query('DELETE FROM progress_logs WHERE id = $1', [logId]);
     res.json({ success: true });
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 

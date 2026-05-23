@@ -22,7 +22,7 @@ const CLIENT_LIMITS = {
   medical_notes: 2000,
 };
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     const { rows } = await pool.query(
       `SELECT c.*,
@@ -80,7 +80,7 @@ router.get('/', async (req, res) => {
     );
     res.json(rows);
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
@@ -109,7 +109,7 @@ function validateClientBody(body, { requireName }) {
   return null;
 }
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
   const body = req.body || {};
   const s = sanitizeBody(body, CLIENT_LIMITS);
   if (s.error) return res.status(400).json({ error: s.error });
@@ -127,10 +127,10 @@ router.post('/', async (req, res) => {
         body.name,
         body.email || null,
         body.phone || null,
-        body.age || null,
+        body.age ?? null,
         body.gender || null,
-        body.height_cm || null,
-        body.start_weight || null,
+        body.height_cm ?? null,
+        body.start_weight ?? null,
         body.allergies || null,
         body.medical_notes || null,
         body.status || null,
@@ -138,11 +138,11 @@ router.post('/', async (req, res) => {
     );
     res.status(201).json(rows[0]);
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   const id = parseInt(req.params.id, 10);
   if (!Number.isInteger(id)) return res.status(404).json({ error: 'Not found' });
   try {
@@ -170,11 +170,11 @@ router.get('/:id', async (req, res) => {
       recent_logs: logsRes.rows,
     });
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
   const id = parseInt(req.params.id, 10);
   if (!Number.isInteger(id)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
@@ -203,11 +203,11 @@ router.put('/:id', async (req, res) => {
     if (!rows[0]) return res.status(404).json({ error: 'Not found' });
     res.json(rows[0]);
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
   const id = parseInt(req.params.id, 10);
   if (!Number.isInteger(id)) return res.status(404).json({ error: 'Not found' });
   try {
@@ -218,7 +218,7 @@ router.delete('/:id', async (req, res) => {
     if (!rowCount) return res.status(404).json({ error: 'Not found' });
     res.json({ success: true });
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 

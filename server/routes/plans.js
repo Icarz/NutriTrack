@@ -9,6 +9,12 @@ router.use(auth);
 
 const PLAN_LIMITS = { notes: 2000 };
 
+function isValidIsoDate(s) {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + 'T00:00:00Z');
+  return !Number.isNaN(d.getTime());
+}
+
 async function verifyClient(clientId, nutritionistId) {
   const { rows } = await pool.query(
     'SELECT id FROM clients WHERE id = $1 AND nutritionist_id = $2',
@@ -105,7 +111,7 @@ function round1(n) {
 // 1. GET /api/clients/:id/plans/active
 // Returns plan with most recent week_start <= today, or most recent future plan,
 // with full meals/totals payload. Null if no plans exist.
-router.get('/clients/:id/plans/active', async (req, res) => {
+router.get('/clients/:id/plans/active', async (req, res, next) => {
   const clientId = parseInt(req.params.id, 10);
   if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
   try {
@@ -124,12 +130,12 @@ router.get('/clients/:id/plans/active', async (req, res) => {
     const payload = await buildPlanResponse(rows[0].id);
     res.json(payload);
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
 // 2. GET /api/clients/:id/plans/week?date=YYYY-MM-DD
-router.get('/clients/:id/plans/week', async (req, res) => {
+router.get('/clients/:id/plans/week', async (req, res, next) => {
   const clientId = parseInt(req.params.id, 10);
   if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
   const date = req.query.date;
@@ -148,12 +154,12 @@ router.get('/clients/:id/plans/week', async (req, res) => {
     const payload = await buildPlanResponse(rows[0].id);
     res.json(payload);
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
 // 3. GET /api/clients/:id/plans
-router.get('/clients/:id/plans', async (req, res) => {
+router.get('/clients/:id/plans', async (req, res, next) => {
   const clientId = parseInt(req.params.id, 10);
   if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
   try {
@@ -175,12 +181,12 @@ router.get('/clients/:id/plans', async (req, res) => {
     );
     res.json(rows);
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
 // 4. POST /api/clients/:id/plans
-router.post('/clients/:id/plans', async (req, res) => {
+router.post('/clients/:id/plans', async (req, res, next) => {
   const clientId = parseInt(req.params.id, 10);
   if (!Number.isInteger(clientId)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
@@ -188,6 +194,9 @@ router.post('/clients/:id/plans', async (req, res) => {
   if (s.error) return res.status(400).json({ error: s.error });
   const { week_start, notes } = body;
   if (!week_start) return res.status(400).json({ error: 'week_start required' });
+  if (week_start && !isValidIsoDate(week_start)) {
+    return res.status(400).json({ error: 'week_start must be a valid ISO date' });
+  }
   try {
     const client = await verifyClient(clientId, req.nutritionist.id);
     if (!client) return res.status(404).json({ error: 'Not found' });
@@ -200,12 +209,12 @@ router.post('/clients/:id/plans', async (req, res) => {
     );
     res.status(201).json(rows[0]);
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
 // 5. GET /api/plans/:planId
-router.get('/plans/:planId', async (req, res) => {
+router.get('/plans/:planId', async (req, res, next) => {
   const planId = parseInt(req.params.planId, 10);
   if (!Number.isInteger(planId)) return res.status(404).json({ error: 'Not found' });
   try {
@@ -216,12 +225,12 @@ router.get('/plans/:planId', async (req, res) => {
     if (!payload) return res.status(404).json({ error: 'Not found' });
     res.json(payload);
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
 // 6. PUT /api/plans/:planId
-router.put('/plans/:planId', async (req, res) => {
+router.put('/plans/:planId', async (req, res, next) => {
   const planId = parseInt(req.params.planId, 10);
   if (!Number.isInteger(planId)) return res.status(404).json({ error: 'Not found' });
   const body = req.body || {};
@@ -248,12 +257,12 @@ router.put('/plans/:planId', async (req, res) => {
     );
     res.json(rows[0]);
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
 // 7. DELETE /api/plans/:planId
-router.delete('/plans/:planId', async (req, res) => {
+router.delete('/plans/:planId', async (req, res, next) => {
   const planId = parseInt(req.params.planId, 10);
   if (!Number.isInteger(planId)) return res.status(404).json({ error: 'Not found' });
   try {
@@ -262,12 +271,12 @@ router.delete('/plans/:planId', async (req, res) => {
     await pool.query('DELETE FROM diet_plans WHERE id = $1', [planId]);
     res.json({ success: true });
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 
 // 8. POST /api/plans/:planId/copy-from/:sourcePlanId
-router.post('/plans/:planId/copy-from/:sourcePlanId', async (req, res) => {
+router.post('/plans/:planId/copy-from/:sourcePlanId', async (req, res, next) => {
   const planId = parseInt(req.params.planId, 10);
   const sourceId = parseInt(req.params.sourcePlanId, 10);
   if (!Number.isInteger(planId) || !Number.isInteger(sourceId)) {
@@ -294,7 +303,7 @@ router.post('/plans/:planId/copy-from/:sourcePlanId', async (req, res) => {
     const payload = await buildPlanResponse(planId);
     res.json(payload);
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    next(e);
   }
 });
 

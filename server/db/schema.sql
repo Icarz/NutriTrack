@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS clients (
 
 CREATE TABLE IF NOT EXISTS goals (
   id              SERIAL PRIMARY KEY,
-  client_id       INT REFERENCES clients(id) ON DELETE CASCADE,
+  client_id       INT REFERENCES clients(id) ON DELETE CASCADE NOT NULL,
   target_weight   NUMERIC(5,1),
   target_date     DATE,
   daily_calories  INT,
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS goals (
 
 CREATE TABLE IF NOT EXISTS diet_plans (
   id           SERIAL PRIMARY KEY,
-  client_id    INT REFERENCES clients(id) ON DELETE CASCADE,
+  client_id    INT REFERENCES clients(id) ON DELETE CASCADE NOT NULL,
   week_start   DATE NOT NULL,
   notes        TEXT,
   created_at   TIMESTAMPTZ DEFAULT NOW()
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS diet_plans (
 
 CREATE TABLE IF NOT EXISTS meals (
   id           SERIAL PRIMARY KEY,
-  plan_id      INT REFERENCES diet_plans(id) ON DELETE CASCADE,
+  plan_id      INT REFERENCES diet_plans(id) ON DELETE CASCADE NOT NULL,
   day_of_week  INT NOT NULL,
   meal_type    VARCHAR(50),
   description  TEXT NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS meals (
 
 CREATE TABLE IF NOT EXISTS progress_logs (
   id                SERIAL PRIMARY KEY,
-  client_id         INT REFERENCES clients(id) ON DELETE CASCADE,
+  client_id         INT REFERENCES clients(id) ON DELETE CASCADE NOT NULL,
   log_date          DATE NOT NULL,
   weight            NUMERIC(5,1),
   waist_cm          NUMERIC(5,1),
@@ -71,3 +71,9 @@ CREATE TABLE IF NOT EXISTS progress_logs (
   next_appointment  DATE,
   created_at   TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Backfill NOT NULL on FK columns for pre-existing databases (idempotent).
+ALTER TABLE goals          ALTER COLUMN client_id SET NOT NULL;
+ALTER TABLE diet_plans     ALTER COLUMN client_id SET NOT NULL;
+ALTER TABLE progress_logs  ALTER COLUMN client_id SET NOT NULL;
+ALTER TABLE meals          ALTER COLUMN plan_id   SET NOT NULL;

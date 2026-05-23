@@ -1,0 +1,347 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "newClient": "Nouveau client",
+    "dietPlans": "Plans alimentaires",
+    "settings": "Paramètres",
+    "signOut": "Se déconnecter"
+  },
+  "auth": {
+    "signIn": "Se connecter",
+    "signingIn": "Connexion…",
+    "email": "Email",
+    "password": "Mot de passe",
+    "invalidCredentials": "Email ou mot de passe incorrect",
+    "subtitle": "Connectez-vous à votre compte"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "newClient": "Nouveau client",
+    "totalClients": "Total clients",
+    "activePlans": "Plans actifs",
+    "avgGoalProgress": "Progression moy.",
+    "checkInsThisWeek": "Visites cette semaine",
+    "searchPlaceholder": "Rechercher un client…",
+    "noClientsYet": "Aucun client pour l'instant",
+    "noClientsSubtext": "Ajoutez votre premier client pour commencer",
+    "addClient": "Ajouter un client",
+    "noClientsMatch": "Aucun client correspondant",
+    "loadFailed": "Échec du chargement des clients",
+    "columns": {
+      "client": "Client",
+      "goalProgress": "Progression",
+      "lastCheckIn": "Dernière visite",
+      "currentWeight": "Poids actuel",
+      "status": "Statut"
+    },
+    "never": "Jamais",
+    "noGoalSet": "Pas d'objectif",
+    "filters": {
+      "all": "Tous",
+      "active": "Actif",
+      "new": "Nouveau",
+      "paused": "En pause",
+      "overdue": "En retard"
+    }
+  },
+  "client": {
+    "female": "Femme",
+    "male": "Homme",
+    "other": "Autre",
+    "started": "Depuis",
+    "editProfile": "Modifier le profil",
+    "logVisit": "Enregistrer une visite",
+    "newPlan": "Nouveau plan",
+    "overdueBanner": "Dernière visite il y a {{days}} jours — pensez à planifier un suivi",
+    "statCards": {
+      "startWeight": "Poids initial",
+      "currentWeight": "Poids actuel",
+      "targetWeight": "Poids cible",
+      "goalProgress": "Progression"
+    },
+    "weightTrend": "Courbe de poids",
+    "lastSessions": "{{count}} dernières séances",
+    "notEnoughData": "Pas assez de données — enregistrez au moins 2 visites pour voir le graphique",
+    "goalBreakdown": "Détail de l'objectif",
+    "macroTargets": "Objectifs nutritionnels",
+    "noDataYet": "Pas encore de données",
+    "visitLog": "Journal des visites",
+    "noVisitsYet": "Aucune visite enregistrée",
+    "currentDietPlan": "Plan alimentaire actuel",
+    "weekOf": "Semaine du",
+    "restDay": "Jour de repos",
+    "viewFullPlan": "Voir le plan complet",
+    "noDietPlanYet": "Pas encore de plan alimentaire",
+    "createFirstPlan": "Créer le premier plan",
+    "kgLost": "{{kg}} kg perdus",
+    "kgToGo": "{{kg}} kg restants",
+    "daysLeft": "{{days}} jours restants",
+    "onTrack": "Dans les temps",
+    "behind": "En retard",
+    "noGoalSet": "Pas d'objectif",
+    "noGoalSetYet": "Aucun objectif défini",
+    "setGoal": "Définir un objectif",
+    "saveGoal": "Enregistrer l'objectif",
+    "saving": "Enregistrement…",
+    "cancel": "Annuler",
+    "actualWeight": "Poids réel",
+    "target": "Objectif ({{weight}} kg)",
+    "weightOverTime": "Évolution du poids",
+    "by": "Le {{date}}",
+    "macros": {
+      "protein": "Protéines",
+      "carbs": "Glucides",
+      "fat": "Lipides",
+      "fiber": "Fibres"
+    },
+    "validation": {
+      "targetWeightPositive": "Le poids cible doit être un nombre positif",
+      "targetWeightDirection": "Le poids cible doit être inférieur au poids initial pour un objectif de perte de poids",
+      "targetDateRequired": "La date cible est obligatoire",
+      "targetDateFuture": "La date cible doit être dans le futur",
+      "dailyCaloriesRange": "Les calories journalières doivent être entre 500 et 5000"
+    }
+  },
+  "weightChart": {
+    "weight": "Poids",
+    "target": "cible"
+  },
+  "clientForm": {
+    "newClient": "Nouveau client",
+    "editClient": "Modifier le client",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "cancel": "Annuler",
+    "deleteClient": "Supprimer le client",
+    "deleteConfirm": "Cela supprimera définitivement toutes les visites, plans et données de ce client.",
+    "deleteYes": "Oui, supprimer définitivement",
+    "sections": {
+      "personalInfo": "Informations personnelles",
+      "bodyMeasurements": "Mensurations",
+      "goal": "Objectif",
+      "dailyMacros": "Objectifs nutritionnels journaliers",
+      "healthNotes": "Notes de santé"
+    },
+    "fields": {
+      "name": "Nom complet",
+      "email": "Email",
+      "phone": "Téléphone",
+      "age": "Âge",
+      "gender": "Sexe",
+      "height": "Taille (cm)",
+      "startWeight": "Poids initial (kg)",
+      "status": "Statut",
+      "targetWeight": "Poids cible (kg)",
+      "targetDate": "Date cible",
+      "dailyCalories": "Calories journalières (kcal)",
+      "protein": "Protéines (g)",
+      "carbs": "Glucides (g)",
+      "fat": "Lipides (g)",
+      "fiber": "Fibres (g)",
+      "allergies": "Allergies et intolérances",
+      "medicalNotes": "Notes médicales"
+    },
+    "status": {
+      "active": "Actif",
+      "new": "Nouveau",
+      "paused": "En pause"
+    },
+    "errors": {
+      "nameRequired": "Le nom est obligatoire",
+      "nameTooShort": "Le nom doit contenir au moins 2 caractères",
+      "startWeightRequired": "Le poids initial est obligatoire",
+      "startWeightPositive": "Le poids initial doit être un nombre positif",
+      "ageRange": "L'âge doit être compris entre 1 et 120",
+      "heightRange": "La taille doit être comprise entre 50 et 250 cm",
+      "targetWeightRequired": "Le poids cible est obligatoire",
+      "targetWeightDirection": "Le poids cible doit être inférieur au poids initial pour un objectif de perte de poids",
+      "targetDateRequired": "La date cible est obligatoire",
+      "targetDateFuture": "La date cible doit être dans le futur"
+    }
+  },
+  "dietPlan": {
+    "title": "Créateur de plan alimentaire",
+    "subtitleWithGoal": "{{name}} · objectif {{calories}} kcal/jour · {{protein}}g protéines",
+    "subtitleNoGoal": "{{name}} · Pas d'objectif défini",
+    "noGoalSet": "Pas d'objectif défini",
+    "copyPrevWeek": "Copier sem. précédente",
+    "copying": "Copie…",
+    "savePlan": "Enregistrer le plan",
+    "saving": "Enregistrement…",
+    "saved": "Enregistré ✓",
+    "downloadPlan": "Télécharger le plan ↓",
+    "preparing": "Préparation…",
+    "noMealsToExport": "Aucun repas à exporter",
+    "noMealsHint": "Cliquez sur une cellule pour ajouter un repas",
+    "prevWeek": "Semaine précédente",
+    "nextWeek": "Semaine suivante",
+    "summaryCards": {
+      "avgDailyKcal": "Moy. kcal/jour",
+      "avgProtein": "Moy. protéines",
+      "avgCarbs": "Moy. glucides",
+      "avgFat": "Moy. lipides",
+      "daysFilled": "Jours remplis"
+    },
+    "mealTypes": {
+      "breakfast": "Petit-déjeuner",
+      "lunch": "Déjeuner",
+      "dinner": "Dîner",
+      "snack": "Collation"
+    },
+    "days": {
+      "monday": "Lundi",
+      "tuesday": "Mardi",
+      "wednesday": "Mercredi",
+      "thursday": "Jeudi",
+      "friday": "Vendredi",
+      "saturday": "Samedi",
+      "sunday": "Dimanche"
+    },
+    "day": "Jour",
+    "addMeal": "+ Ajouter un repas",
+    "addAnother": "+ Ajouter un autre",
+    "planNotes": "Notes du plan",
+    "planNotesPlaceholder": "ex. éviter les produits laitiers le vendredi, augmenter les protéines les jours d'entraînement…",
+    "planNotesEmpty": "Ajoutez d'abord un repas pour démarrer le plan.",
+    "loading": "Chargement…",
+    "backToClient": "← Retour au client",
+    "dailyTotal": "Total journalier",
+    "pdf": {
+      "target": "OBJECTIF",
+      "daily": "JOURNALIER",
+      "protein": "PROTÉINES",
+      "carbs": "GLUCIDES",
+      "fat": "LIPIDES",
+      "generatedBy": "Généré par NutriTrack"
+    }
+  },
+  "mealForm": {
+    "newMeal": "Nouveau repas",
+    "editMeal": "Modifier le repas",
+    "description": "Description",
+    "descriptionPlaceholder": "ex. Salade de poulet grillé à l'huile d'olive",
+    "calories": "Calories",
+    "protein": "Protéines",
+    "carbs": "Glucides",
+    "fat": "Lipides",
+    "estimatedFromMacros": "Estimé d'après les macros : {{kcal}} kcal",
+    "recalculate": "Recalculer d'après les macros",
+    "addMeal": "Ajouter le repas",
+    "saveChanges": "Enregistrer les modifications",
+    "deleteMeal": "Supprimer le repas",
+    "cancel": "Annuler",
+    "deleteConfirm": "Êtes-vous sûr ?",
+    "deleteYes": "Oui, supprimer",
+    "errors": {
+      "descriptionRequired": "La description est obligatoire",
+      "descriptionTooShort": "La description doit contenir au moins 3 caractères",
+      "macroWarning": "Attention — les calories ne correspondent pas au total des macros (estimé {{kcal}} kcal)"
+    }
+  },
+  "progressLog": {
+    "title": "Enregistrer une visite",
+    "subtitle": "{{name}} · dernière visite il y a {{days}} jours",
+    "subtitleFirst": "{{name}} · première visite",
+    "firstVisit": "Première visite",
+    "saveVisit": "Enregistrer la visite",
+    "saving": "Enregistrement…",
+    "cancel": "Annuler",
+    "panels": {
+      "weightMeasurements": "Poids & mensurations",
+      "sessionNotes": "Notes de séance",
+      "goalSnapshot": "Aperçu de l'objectif",
+      "previousVisits": "Visites précédentes"
+    },
+    "previousVisit": "Visite précédente",
+    "visitDate": "Date de la visite",
+    "weight": "Poids (kg)",
+    "measurements": "Mensurations (optionnel)",
+    "waist": "Tour de taille (cm)",
+    "hips": "Tour de hanches (cm)",
+    "arms": "Tour de bras (cm)",
+    "howIsClientFeeling": "Comment se sent le client ?",
+    "planAdjustments": "Ajustements du plan lors de cette séance",
+    "nextAppointment": "Prochain rendez-vous",
+    "goalRows": {
+      "startWeight": "Poids initial",
+      "currentVisit": "Actuel (cette visite)",
+      "target": "Objectif",
+      "totalLost": "Total perdu",
+      "remaining": "Restant"
+    },
+    "targetDate": "Date cible : {{date}} · {{days}} jours restants",
+    "pastDue": "Dépassée",
+    "thisIsFirstVisit": "C'est la première visite",
+    "noGoalSet": "Pas d'objectif défini",
+    "noPreviousData": "Aucune donnée précédente — ce sera la mesure de départ",
+    "last": "Dernier",
+    "start": "Initial",
+    "targetShort": "Cible",
+    "progress": "Progression",
+    "feelingPlaceholder": "ex. plus d'énergie, meilleur sommeil, difficultés le week-end...",
+    "adjustmentsPlaceholder": "ex. augmentation des protéines, ajout d'un plan jour de repos...",
+    "backToClient": "← Retour au client",
+    "prev": {
+      "weight": "Poids",
+      "waist": "Taille",
+      "hips": "Hanches",
+      "arms": "Bras"
+    },
+    "errors": {
+      "weightRequired": "Le poids est obligatoire",
+      "weightPositive": "Le poids doit être un nombre positif",
+      "weightRange": "Le poids doit être compris entre 20 et 300 kg",
+      "dateFuture": "La date de visite ne peut pas être dans le futur"
+    }
+  },
+  "admin": {
+    "title": "Administration NutriTrack",
+    "secretPlaceholder": "Entrez le secret administrateur",
+    "loadAccounts": "Charger les comptes",
+    "createAccount": "Créer un compte",
+    "columns": {
+      "name": "Nom",
+      "email": "Email",
+      "plan": "Plan",
+      "status": "Statut",
+      "clients": "Clients",
+      "created": "Créé le",
+      "actions": "Actions"
+    },
+    "plans": {
+      "trial": "Essai",
+      "solo": "Solo",
+      "growth": "Croissance"
+    },
+    "status": {
+      "active": "Actif",
+      "suspended": "Suspendu"
+    },
+    "actions": {
+      "suspend": "Suspendre",
+      "reactivate": "Réactiver",
+      "delete": "Supprimer",
+      "sure": "Sûr ?",
+      "yesDelete": "Oui supprimer",
+      "cancel": "Annuler"
+    },
+    "errors": {
+      "wrongSecret": "Secret administrateur incorrect",
+      "somethingWrong": "Une erreur est survenue"
+    }
+  },
+  "common": {
+    "loading": "Chargement…",
+    "saving": "Enregistrement…",
+    "back": "Retour",
+    "backToClients": "Retour aux clients",
+    "backToDashboard": "Retour au tableau de bord",
+    "clientNotFound": "Client introuvable",
+    "signedInAs": "Connecté en tant que",
+    "kg": "kg",
+    "kcal": "kcal",
+    "g": "g",
+    "cm": "cm",
+    "days": "jours"
+  }
+}
