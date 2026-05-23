@@ -28,3 +28,11 @@ export async function deleteAccount(secret, id) {
   const { data } = await client(secret).delete(`/api/admin/nutritionists/${id}`);
   return data;
 }
+
+export async function resetPassword(secret, id, new_password) {
+  const { data } = await client(secret).post(
+    `/api/admin/nutritionists/${id}/reset-password`,
+    { new_password }
+  );
+  return data;
+}

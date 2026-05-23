@@ -16,13 +16,27 @@ function isValidIsoDate(s) {
 router.get('/nutritionists', async (req, res, next) => {
   try {
     const { rows } = await pool.query(`
-      SELECT n.id, n.email, n.name, n.plan, n.plan_expires_at, n.is_active, n.created_at,
-             COALESCE(c.client_count, 0)::int AS client_count
+      SELECT
+        n.id,
+        n.name,
+        n.email,
+        n.plan,
+        n.plan_expires_at,
+        n.is_active,
+        n.created_at,
+        COUNT(DISTINCT c.id)::int  AS client_count,
+        COUNT(DISTINCT dp.id)::int AS total_plans,
+        COUNT(DISTINCT pl.id)::int AS total_logs,
+        GREATEST(
+          MAX(c.created_at),
+          MAX(dp.created_at),
+          MAX(pl.created_at)
+        ) AS last_activity
       FROM nutritionist n
-      LEFT JOIN (
-        SELECT nutritionist_id, COUNT(*) AS client_count
-        FROM clients GROUP BY nutritionist_id
-      ) c ON c.nutritionist_id = n.id
+      LEFT JOIN clients c        ON c.nutritionist_id = n.id
+      LEFT JOIN diet_plans dp    ON dp.client_id = c.id
+      LEFT JOIN progress_logs pl ON pl.client_id = c.id
+      GROUP BY n.id
       ORDER BY n.created_at DESC
     `);
     res.json(rows);
@@ -84,6 +98,26 @@ router.put('/nutritionists/:id', async (req, res, next) => {
     );
     if (!rows[0]) return res.status(404).json({ error: 'Not found' });
     res.json(rows[0]);
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.post('/nutritionists/:id/reset-password', async (req, res, next) => {
+  const id = parseInt(req.params.id, 10);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: 'Invalid id' });
+  const { new_password } = req.body || {};
+  if (typeof new_password !== 'string' || new_password.length < 12) {
+    return res.status(400).json({ error: 'Password must be at least 12 characters' });
+  }
+  try {
+    const password_hash = await bcrypt.hash(new_password, 12);
+    const { rowCount } = await pool.query(
+      'UPDATE nutritionist SET password_hash = $1 WHERE id = $2',
+      [password_hash, id]
+    );
+    if (!rowCount) return res.status(404).json({ error: 'Not found' });
+    res.json({ success: true });
   } catch (e) {
     next(e);
   }
