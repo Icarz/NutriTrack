@@ -49,6 +49,8 @@
     "male": "Homme",
     "other": "Autre",
     "started": "Depuis",
+    "progressReport": "Rapport de progression",
+    "downloadReport": "Télécharger le rapport",
     "editProfile": "Modifier le profil",
     "logVisit": "Enregistrer une visite",
     "newPlan": "Nouveau plan",

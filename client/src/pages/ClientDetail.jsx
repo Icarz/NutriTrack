@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import Sidebar from '../components/Sidebar';
 import WeightChart from '../components/WeightChart';
 import GoalProgressBar from '../components/GoalProgressBar';
+import ProgressReportPDF from '../components/ProgressReportPDF';
 import Badge from '../components/Badge';
 import { getClient } from '../api/clients';
 import { getActivePlan } from '../api/plans';
@@ -160,6 +162,55 @@ export default function ClientDetail() {
               >
                 {t('client.logVisit')}
               </Link>
+              {logs.length === 0 ? (
+                <button
+                  type="button"
+                  disabled
+                  className="px-3 py-1.5 text-sm border rounded text-gray-400 cursor-not-allowed"
+                >
+                  {t('client.downloadReport')} ↓
+                </button>
+              ) : (
+                <PDFDownloadLink
+                  document={
+                    <ProgressReportPDF
+                      client={client}
+                      goal={goal}
+                      logs={logs}
+                      logSummary={logSummary}
+                      generatedDate={new Date().toLocaleDateString('en-GB', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
+                      labels={{
+                        progressReport: t('client.progressReport'),
+                        goalProgress: t('client.goalBreakdown'),
+                        visitHistory: t('progressLog.panels.previousVisits'),
+                        targets: t('client.macroTargets'),
+                        generatedBy: t('dietPlan.pdf.generatedBy'),
+                        actualWeight: t('client.actualWeight'),
+                        target: t('client.target'),
+                        onTrack: t('client.onTrack'),
+                        behind: t('client.behind'),
+                        noGoalSet: t('client.noGoalSet'),
+                        memberSince: 'Member since',
+                        date: 'Date',
+                        weight: 'Weight',
+                        change: 'Change',
+                        notes: 'Notes',
+                      }}
+                    />
+                  }
+                  fileName={`${client?.name}-progress-report-${new Date().toISOString().split('T')[0]}.pdf`}
+                >
+                  {({ loading }) => (
+                    <button className="px-3 py-1.5 text-sm border rounded hover:bg-gray-100">
+                      {loading ? 'Preparing...' : `${t('client.downloadReport')} ↓`}
+                    </button>
+                  )}
+                </PDFDownloadLink>
+              )}
               <Link
                 to={`/clients/${clientId}/plan/new`}
                 className="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700"

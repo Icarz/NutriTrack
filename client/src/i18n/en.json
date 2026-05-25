@@ -49,6 +49,8 @@
     "male": "Male",
     "other": "Other",
     "started": "Started",
+    "progressReport": "Progress Report",
+    "downloadReport": "Download report",
     "editProfile": "Edit profile",
     "logVisit": "Log visit",
     "newPlan": "New plan",
